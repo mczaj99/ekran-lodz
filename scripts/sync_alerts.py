@@ -1,0 +1,70 @@
+#!/usr/bin/env python3
+"""Zapisz komunikaty MPK w pliku JSON dla domowego ekranu TV."""
+import json
+import os
+import re
+from datetime import datetime, timezone
+from pathlib import Path
+from urllib.parse import urljoin
+import requests
+from bs4 import BeautifulSoup
+
+SOURCE = "https://www.mpk.lodz.pl/showtrafficproblemslist.action?category=1211"
+OUTPUT = Path(os.environ.get("ALERT_OUTPUT", "mpk-alerts.json"))
+LINES_PATTERN = re.compile(r"\b(?:[A-Z]{0,2}\d{1,3}[A-Z]?)\b", re.I)
+RESOLVED = re.compile(
+    r"ruch.{0,35}(?:wznowion|przywrócon)|(?:wznowion|przywrócon).{0,35}ruch|"
+    r"komunikacja.{0,30}wznowion|tramwaje.{0,30}(?:kursują|powróciły).{0,30}(?:normalnie|tras)|"
+    r"utrudnieni[ae].{0,30}zakończon",
+    re.I,
+)
+
+def fetch_alerts():
+    response = requests.get(
+        SOURCE,
+        headers={"User-Agent": "EkranLodzDomowy/1.0", "Accept-Language": "pl-PL,pl;q=0.9"},
+        timeout=30,
+    )
+    response.raise_for_status()
+    soup = BeautifulSoup(response.content, "html.parser")
+    tables = [t for t in soup.find_all("table")
+              if "Nr linii" in t.get_text(" ", strip=True)
+              and "Utrudnienie w ruchu" in t.get_text(" ", strip=True)]
+    if not tables:
+        if "Brak utrudnień w ruchu" in soup.get_text(" ", strip=True):
+            return []
+        raise RuntimeError("Nie znaleziono tabeli utrudnień MPK")
+    alerts = []
+    for tr in tables[0].find_all("tr"):
+        cells = tr.find_all("td", recursive=False)
+        if len(cells) < 3:
+            continue
+        lines_text = cells[0].get_text(" ", strip=True)
+        lines = sorted(set(LINES_PATTERN.findall(lines_text)), key=lambda x: (len(x), x))
+        if not lines or len(lines_text) > 120:
+            continue
+        message = cells[1].get_text(" ", strip=True)
+        update = cells[2].get_text(" ", strip=True)
+        if len(message) < 12:
+            continue
+        if update and RESOLVED.search(update):
+            continue
+        url = SOURCE
+        links = cells[1].find_all("a", href=True)
+        if links:
+            candidate = urljoin(SOURCE, links[0]["href"])
+            if candidate.startswith("https://www.mpk.lodz.pl/"):
+                url = candidate
+        alerts.append({"lines": lines, "message": message[:340],
+                       "update": update[:180], "url": url})
+    return alerts[:24]
+
+def main():
+    alerts = fetch_alerts()
+    payload = {"updatedAt": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+               "status": "ok", "source": "MPK Łódź", "items": alerts}
+    OUTPUT.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    print("Przygotowano", len(alerts), "bieżących komunikatów")
+
+if __name__ == "__main__":
+    main()
