@@ -2,130 +2,141 @@
 <html lang="pl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="light dark">
-<title>Domowy ekran — Łódź Śródmieście</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<title>Łódź Śródmieście — ekran domowy</title>
 <style>
-  :root{font-family:Arial,Helvetica,sans-serif;color-scheme:light;}
+  :root{font-family:Arial,'Helvetica Neue',Helvetica,sans-serif;color-scheme:dark}
   *{box-sizing:border-box}
-  html,body{width:100%;height:100%;margin:0;overflow:hidden}
-  body{--bg:#f3f5f8;--surface:#fff;--fg:#161c28;--muted:#667080;--line:#dce1e8;--soft:#f7f8fa;--accent:#2459cd;--accentbg:#edf3ff;background:var(--bg);color:var(--fg)}
-  body.night{--bg:#0c111a;--surface:#181f2a;--fg:#f0f3fa;--muted:#a8b2c1;--line:#333e4d;--soft:#202a36;--accent:#88b5ff;--accentbg:#213552;color-scheme:dark}
-  #screen{width:1920px;height:1080px;position:absolute;top:0;left:0;transform-origin:top left;display:grid;grid-template-rows:139px 323px 439px 35px;gap:19px;padding:40px 55px;overflow:hidden}
-  .top{display:flex;align-items:center;justify-content:space-between;min-width:0;gap:35px}
-  .eyebrow{font-size:22px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--muted)}
-  .location{font-size:33px;font-weight:750;letter-spacing:.1px;margin-top:9px}
-  .clockbox{text-align:right;display:flex;align-items:center;gap:27px}
-  #clock{font-size:112px;line-height:1;font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-5px}
-  #date{font-size:26px;color:var(--muted);line-height:1.33;max-width:270px;text-align:left;text-transform:capitalize}
-  .columns{display:grid;grid-template-columns:1.28fr .72fr;gap:22px;min-width:0;min-height:0}
-  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-width:0;min-height:0}
-  .card{border:1px solid var(--line);border-radius:26px;background:var(--surface);padding:28px 33px;overflow:hidden;min-width:0;min-height:0}
-  .card-head{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0}
-  h2{font-size:29px;line-height:1.13;margin:0;font-weight:750}
-  .source{font-size:18px;color:var(--muted);text-align:right;white-space:nowrap}
-  .wx-top{height:158px;display:flex;align-items:center;gap:21px;min-width:0}
-  .wx-icon{font-size:98px;width:118px;line-height:1;text-align:center;filter:grayscale(1);flex-shrink:0}
-  .temp{font-size:110px;font-weight:740;letter-spacing:-5px;line-height:1;min-width:220px;font-variant-numeric:tabular-nums}
-  .wx-extra{font-size:26px;line-height:1.4;min-width:0}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden}
+  body{--bg:#141d27;--surface:#1a2532;--surface2:#1c2937;--fg:#f6f8fc;--muted:#b2c0ce;--line:#425061;--accent:#86d7f0;--accentink:#081723;--soft:#263344;background:var(--bg);color:var(--fg);color-scheme:dark}
+  body.night{--bg:#090e16;--surface:#111923;--surface2:#14202b;--fg:#f6f8fc;--muted:#a8b6c7;--line:#344354;--soft:#1a2734;--accent:#80d1ef}
+  #screen{position:absolute;top:0;left:0;transform-origin:top left;width:1920px;height:1080px;overflow:hidden;padding:42px 48px;display:grid;grid-template-rows:214px 298px minmax(0,1fr) 26px;gap:18px}
+  .top,.middle{display:grid;gap:24px;min-width:0;min-height:0}
+  .top{grid-template-columns:510px minmax(0,1fr)}
+  .middle{grid-template-columns:560px minmax(0,1fr)}
+  .hero-clock{display:flex;flex-direction:column;justify-content:center;min-width:0;padding-left:3px}
+  .eyebrow{font-size:18px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  #clock{font-size:134px;line-height:.99;font-weight:700;letter-spacing:-6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+  #date{font-size:29px;margin-top:12px;line-height:1.2;text-transform:capitalize;color:var(--muted);white-space:nowrap}
+  .card{min-width:0;min-height:0;border:1px solid var(--line);border-radius:23px;background:var(--surface);overflow:hidden;padding:22px 27px}
+  .card-head{display:flex;justify-content:space-between;gap:16px;align-items:center;min-width:0}
+  h2{font-size:29px;line-height:1.15;font-weight:700;margin:0;letter-spacing:-.35px}
+  .source{font-size:18px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right;flex-shrink:1;min-width:0}
   .muted{color:var(--muted)}
-  .forecast{border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-top:16px;gap:12px}
-  .forecast .slot{display:flex;align-items:center;gap:12px;justify-content:center;min-width:0}
-  .forecast .ficon{font-size:35px;filter:grayscale(1)}
-  .forecast .ftext{font-size:23px;font-weight:730;line-height:1.33;font-variant-numeric:tabular-nums}
-  .forecast .ftext small{font-size:19px;display:block;font-weight:500;color:var(--muted)}
-  .aqi-main{display:flex;align-items:center;gap:26px;margin-top:13px;margin-bottom:21px}
-  #aqi-number{font-size:99px;line-height:1;font-weight:740;letter-spacing:-4px;min-width:148px}
-  #aqi-label{font-size:34px;font-weight:700;margin-bottom:7px}
-  .aqi-sub{font-size:20px;color:var(--muted);line-height:1.35}
-  .aqi-parts{display:grid;grid-template-columns:1fr 1fr;gap:17px}
-  .part{border:1px solid var(--line);border-radius:17px;padding:14px 17px;background:var(--soft)}
-  .part small{display:block;font-size:20px;color:var(--muted);margin-bottom:5px}
-  .part strong{font-size:38px;letter-spacing:-1px;font-variant-numeric:tabular-nums}
-  .part span{font-size:16px;color:var(--muted)}
-  #events,#departures{margin-top:17px}
-  /* Panel opadów jest w pełni monochromatyczny: kolor akcentowy pozostaje tylko przy najbliższym odjeździe. */
-  .rain-summary{font-size:26px;line-height:1.2;margin:14px 0 6px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:31px}
-  .rain-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:7px;height:272px;min-width:0}
-  .rain-hour{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;text-align:center}
-  .rain-percent{font-size:27px;line-height:31px;font-weight:750;font-variant-numeric:tabular-nums}
-  .rain-graph{height:52px;min-height:52px;width:75%;max-width:108px;border:1px solid var(--line);border-radius:9px 9px 5px 5px;background:var(--soft);display:flex;align-items:flex-end;overflow:hidden;margin:3px 0 4px}
-  .rain-bar{width:100%;background:var(--muted);opacity:.7;border-radius:5px 5px 0 0;min-height:0}
-  .rain-hour-label{font-size:21px;line-height:25px;font-weight:730;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .rain-amount{font-size:18px;line-height:21px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-  .rain-note{margin-top:4px;font-size:18px;color:var(--muted);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .empty{font-size:26px;line-height:1.35;margin:42px 2px;color:var(--muted)}
-  .dep{display:grid;grid-template-columns:100px minmax(0,1fr) 132px;align-items:center;gap:18px;height:83px;border-top:1px solid var(--line);border-radius:9px;padding:0 13px}
-  .dep:first-child{border-top:0}
-  .dep.primary{background:var(--accentbg);border-left:6px solid var(--accent);padding-left:7px}
-  .line-no{font-size:42px;font-weight:800;white-space:nowrap}
-  .direction{font-size:26px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .detail{font-size:19px;color:var(--muted);margin-top:3px}
-  .eta{text-align:right;font-size:41px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .eta small{display:block;font-size:19px;font-weight:500;color:var(--muted);margin-top:3px}
-  .foot{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--muted);font-size:17px;min-width:0}
-  #alerts{font-size:19px;max-width:750px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
-  button{font:inherit;cursor:pointer;color:inherit}
-  .flat{border:0;background:transparent;padding:7px 9px;color:var(--muted);font-size:19px}
-  .flat:focus-visible,.flat:hover{outline:2px solid var(--accent);border-radius:8px}
-  .cta{background:var(--accentbg);border:1px solid var(--accent);border-radius:12px;font-size:22px;padding:10px 16px;margin-top:10px;color:var(--fg)}
-  #settings{position:fixed;inset:0;display:none;z-index:100;background:rgba(0,0,0,.75);justify-content:center;align-items:center;padding:24px}
+  .weather{display:flex;flex-direction:column;justify-content:space-between;padding:20px 32px 19px}
+  .weather .card-head h2{font-size:25px}
+  .wx-top{display:flex;align-items:center;min-width:0;gap:18px;height:87px}
+  .wx-icon{font-size:73px;line-height:1;width:83px;text-align:center;flex-shrink:0;filter:grayscale(1)}
+  .temp{font-size:89px;line-height:1;font-weight:700;letter-spacing:-3px;white-space:nowrap;font-variant-numeric:tabular-nums;min-width:184px}
+  .wx-extra{min-width:0;font-size:24px;line-height:1.24}
+  .wx-extra .muted{font-size:18px;margin-top:3px}
+  .forecast{border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:11px;padding-top:12px;min-height:61px}
+  .forecast .slot{display:flex;gap:9px;align-items:center;justify-content:center;min-width:0}
+  .forecast .ficon{font-size:31px;filter:grayscale(1);line-height:1.1}
+  .forecast .ftext{font-size:22px;font-weight:700;line-height:1.16;white-space:nowrap;font-variant-numeric:tabular-nums}
+  .forecast .ftext small{display:block;font-size:17px;color:var(--muted);font-weight:400;margin-top:3px}
+  .air{padding:23px 27px}
+  .air .card-head .source{max-width:155px}
+  .aqi-main{height:113px;display:flex;align-items:center;gap:24px;margin:6px 0 10px}
+  #aqi-number{font-size:96px;line-height:1;font-weight:700;letter-spacing:-4px;font-variant-numeric:tabular-nums;min-width:140px}
+  #aqi-label{font-size:35px;font-weight:700;line-height:1.15}
+  .aqi-sub{font-size:18px;line-height:1.27;color:var(--muted);margin-top:7px;max-width:290px}
+  .aqi-parts{border-top:1px solid var(--line);padding-top:15px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .part{display:flex;align-items:baseline;gap:8px;white-space:nowrap}
+  .part+ .part{border-left:1px solid var(--line);padding-left:25px}
+  .part small{font-size:20px;color:var(--muted)}
+  .part strong{font-size:32px;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+  .part span{font-size:15px;color:var(--muted)}
+  .rain{padding:23px 26px 17px}
+  .rain .card-head h2{font-size:28px}
+  .rain-summary{font-size:19px;line-height:1.15;font-weight:500;margin:9px 0 5px;min-height:22px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rain-chart{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:3px;height:162px;min-width:0}
+  .rain-hour{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;text-align:center;border-left:1px solid rgba(146,170,193,.12)}
+  .rain-hour:first-child{border-left:0}
+  .rain-percent{font-size:24px;line-height:27px;font-weight:700;font-variant-numeric:tabular-nums}
+  .rain-graph{height:69px;width:68%;max-width:72px;min-height:69px;display:flex;align-items:flex-end;margin:3px 0 5px;background:var(--soft);border-radius:4px;overflow:hidden}
+  .rain-bar{width:100%;background:#7b8d9e;border-radius:3px 3px 0 0;opacity:.85}
+  .rain-hour-label{font-size:17px;white-space:nowrap;font-weight:700;line-height:21px;font-variant-numeric:tabular-nums}
+  .rain-amount{font-size:16px;white-space:nowrap;line-height:19px;font-variant-numeric:tabular-nums;color:var(--muted)}
+  .rain-note{font-size:16px;line-height:1.1;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .departure-card{padding:24px 28px 20px}
+  .departure-card .card-head{margin-bottom:16px}
+  .departure-card h2{font-size:32px}
+  #departures{display:flex;flex-direction:column;gap:8px;min-height:0}
+  .dep{height:69px;display:grid;grid-template-columns:96px minmax(0,1fr) 160px;gap:18px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:0 18px}
+  .dep.primary{background:var(--accent);color:var(--accentink);border-color:var(--accent)}
+  .line-no{font-size:36px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
+  .direction{font-size:28px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+  .detail{font-size:17px;line-height:1.15;margin-top:3px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .eta{text-align:right;font-size:33px;font-weight:750;font-variant-numeric:tabular-nums;white-space:nowrap;line-height:1}
+  .eta small{display:block;font-size:16px;font-weight:400;margin-top:5px;color:var(--muted)}
+  .dep.primary .detail,.dep.primary .eta small{color:#1b4b5f}
+  .empty{font-size:25px;color:var(--muted);line-height:1.35;margin:30px 4px}
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:18px;min-width:0;line-height:1.1;font-size:17px;color:var(--muted)}
+  .foot-left{display:flex;gap:18px;align-items:center;white-space:nowrap}
+  #alerts{font-size:17px;max-width:830px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+  button{font:inherit;color:inherit;cursor:pointer}
+  .flat{background:none;border:1px solid var(--line);border-radius:6px;color:var(--muted);padding:2px 13px;font-size:16px}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+  #settings{position:fixed;inset:0;display:none;z-index:100;align-items:center;justify-content:center;background:rgba(0,0,0,.8);padding:24px}
   #settings.open{display:flex}
-  .modal{width:min(850px,100%);max-height:94vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:34px 42px;font-size:20px}
+  .modal{width:min(830px,100%);max-height:92vh;overflow:auto;background:#18232f;border:1px solid #526174;border-radius:18px;padding:36px 42px;font-size:20px;color:#f7f9fc}
   .modal h2{font-size:32px;margin-bottom:15px}
-  .modal p{line-height:1.4;color:var(--muted)}
+  .modal p{line-height:1.42;color:#b4c3d3}
   .modal label{display:block;font-size:21px;font-weight:700;margin:17px 0 6px}
-  .modal input,.modal select{width:100%;border:1px solid var(--line);background:var(--soft);color:var(--fg);font:inherit;padding:13px;border-radius:10px}
-  .modal .buttons{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:20px}
-  .modal .buttons button{font-size:21px;background:var(--soft);padding:14px 23px;border:1px solid var(--line);border-radius:12px}
-  .modal .buttons button.save{background:var(--accentbg);border-color:var(--accent)}
+  .modal input,.modal select{width:100%;border:1px solid #526174;background:#273545;color:#f7f9fc;font:inherit;padding:13px;border-radius:9px}
+  .modal .buttons{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-top:22px}
+  .modal .buttons button{font-size:21px;background:#273545;color:#f7f9fc;padding:14px 24px;border:1px solid #526174;border-radius:10px}
+  .modal .buttons button.save{background:#87d6f0;color:#081723;border-color:#87d6f0;font-weight:700}
   .tiny{font-size:18px!important}
-  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
-<body>
-<div id="screen" role="main" aria-label="Domowy ekran informacyjny">
+<body class="night">
+<div id="screen" role="main" aria-label="Ekran domowy Łódź Śródmieście">
   <header class="top">
-    <div><div class="eyebrow">Domowy ekran · Łódź</div><div class="location">Śródmieście <span class="muted">/ Legionów – Zachodnia</span></div></div>
-    <div class="clockbox"><div id="clock">--:--</div><div id="date">Ładowanie daty…</div></div>
-  </header>
-  <section class="columns" aria-label="Pogoda i jakość powietrza">
-    <article class="card">
-      <div class="card-head"><h2>Pogoda w Łodzi</h2><span class="source" id="weather-source">Open-Meteo</span></div>
-      <div class="wx-top"><div class="wx-icon" id="weather-icon">◌</div><div class="temp" id="temperature">—°</div><div class="wx-extra"><div id="weather-description">Oczekiwanie na pogodę</div><div class="muted" id="feels-like">Temperatura odczuwalna: —</div><div class="muted" id="sunrise-line">Słońce: —</div></div></div>
+    <div class="hero-clock">
+      <div class="eyebrow">Łódź Śródmieście · domowy ekran</div>
+      <div id="clock">--:--</div>
+      <div id="date">Ładowanie daty…</div>
+    </div>
+    <article class="card weather" aria-label="Aktualna pogoda i prognoza godzinowa">
+      <div class="card-head"><h2>Pogoda · Łódź Śródmieście</h2><span class="source" id="weather-source">Open-Meteo</span></div>
+      <div class="wx-top"><div class="wx-icon" id="weather-icon" aria-hidden="true">◌</div><div class="temp" id="temperature">—°</div><div class="wx-extra"><div id="weather-description">Oczekiwanie na pogodę</div><div class="muted" id="feels-like">Odczuwalna —</div><div class="muted" id="sunrise-line">Wschód i zachód: —</div></div></div>
       <div class="forecast" id="forecast"><div class="muted">Prognoza godzinowa</div></div>
     </article>
-    <article class="card">
+  </header>
+  <section class="middle" aria-label="Jakość powietrza i prognoza opadów">
+    <article class="card air">
       <div class="card-head"><h2>Jakość powietrza</h2><span class="source" id="air-source">Open-Meteo / CAMS</span></div>
       <div class="aqi-main"><div id="aqi-number">—</div><div><div id="aqi-label">Brak danych</div><div class="aqi-sub">Europejski indeks jakości powietrza (EAQI)</div></div></div>
-      <div class="aqi-parts"><div class="part"><small>PM2.5</small><strong id="pm25">—</strong> <span>µg/m³</span></div><div class="part"><small>PM10</small><strong id="pm10">—</strong> <span>µg/m³</span></div></div>
+      <div class="aqi-parts"><div class="part"><small>PM2.5</small><strong id="pm25">—</strong><span>µg/m³</span></div><div class="part"><small>PM10</small><strong id="pm10">—</strong><span>µg/m³</span></div></div>
     </article>
-  </section>
-  <section class="bottom" aria-label="Prognoza opadów i odjazdy">
-    <article class="card">
+    <article class="card rain">
       <div class="card-head"><h2>Opady · najbliższe 12 godzin</h2><span class="source" id="rain-source">Open-Meteo</span></div>
       <div id="rain-summary" class="rain-summary">Ładowanie prognozy opadów…</div>
       <div class="rain-chart" id="rain-chart" aria-label="Szansa opadów w dwunastu kolejnych godzinach"></div>
-      <div class="rain-note" id="rain-note">Godzina „do” oznacza koniec przedziału godzinowego.</div>
-    </article>
-    <article class="card">
-      <div class="card-head"><h2>Najbliższe odjazdy</h2><span class="source" id="transport-source">Legionów – Zachodnia · 0637 / 0638</span></div>
-      <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div>
+      <div class="rain-note" id="rain-note">Godzina „do” oznacza koniec godzinowego przedziału.</div>
     </article>
   </section>
-  <footer class="foot"><div>Źródła: Open-Meteo / CAMS · ZDiT Łódź (GTFS) <button class="flat" id="settings-button" type="button">⚙ Ustawienia</button></div><div id="alerts" aria-live="polite">Uruchamianie…</div></footer>
+  <section class="card departure-card" aria-label="Odjazdy z przystanku Legionów – Zachodnia">
+    <div class="card-head"><h2>Odjazdy · Legionów – Zachodnia</h2><span class="source" id="transport-source">0637 / 0638 · MPK Łódź</span></div>
+    <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div>
+  </section>
+  <footer class="foot"><div class="foot-left"><span>Open-Meteo / CAMS · ZDiT Łódź</span><button class="flat" id="settings-button" type="button">⚙ Ustawienia</button></div><div id="alerts" aria-live="polite">Uruchamianie…</div></footer>
 </div>
 <div id="settings" aria-hidden="true">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
     <h2 id="settings-title">Ustawienia ekranu</h2>
-    <p>Ustawienia są zapisywane tylko w tej przeglądarce. Prognoza opadów nie wymaga klucza ani logowania. Działającego Workera MPK nie trzeba zmieniać.</p>
+    <p>Wszystkie ustawienia zapisują się tylko w tej przeglądarce. Nie zmieniamy konfiguracji Workera MPK. Dane pogodowe i opady pobieramy z Open-Meteo.</p>
     <label for="stop-choice">Stanowisko przystanku</label>
     <select id="stop-choice"><option value="both">Oba stanowiska: 0637 i 0638</option><option value="0637">Tylko 0637</option><option value="0638">Tylko 0638</option></select>
     <label for="kind-choice">Rodzaj pojazdów</label>
     <select id="kind-choice"><option value="all">Autobusy i tramwaje</option><option value="bus">Tylko autobusy</option><option value="tram">Tylko tramwaje</option></select>
-    <label for="proxy-input">Adres pośrednika transportu (Cloudflare Worker)</label>
-    <input id="proxy-input" spellcheck="false" placeholder="https://twoja-nazwa.twoj-subdomain.workers.dev">
-    <p class="tiny">Rozkład MPK pobieramy przez podany pośrednik, aby uniknąć blokady CORS. Pogoda, opady i powietrze pochodzą z Open-Meteo.</p>
+    <label for="proxy-input">Adres pośrednika MPK (Cloudflare Worker)</label>
+    <input id="proxy-input" spellcheck="false" placeholder="https://twoja-nazwa.workers.dev">
+    <p class="tiny">Kalendarz nie jest używany. Na ekranie pozostają zegar, pogoda, 12-godzinne opady, powietrze i odjazdy MPK.</p>
     <div class="buttons"><button id="close-settings" type="button">Zamknij</button><button id="save-settings" class="save" type="button">Zapisz i odśwież</button></div>
     <p id="settings-note" class="tiny" aria-live="polite"></p>
   </div>
@@ -171,7 +182,7 @@ function weatherRender(){renderRain();const w=data.weather;if(!w||!w.current)ret
 let html='';const localNow=dayKey(Date.now())+'T'+fmtTime.format(Date.now());const arr=w.hourly&&w.hourly.time||[];let future=[];for(let i=0;i<arr.length;i++)if(arr[i]>localNow)future.push(i);future=future.slice(0,5);future.forEach(i=>{const [sym]=codeToWeather(w.hourly.weather_code[i]);html+='<div class="slot"><span class="ficon">'+sym+'</span><span class="ftext">'+escapeHTML(arr[i].slice(11,16))+'<small>'+Math.round(w.hourly.temperature_2m[i])+'° · '+Math.round(w.hourly.precipitation_probability[i]||0)+'%</small></span></div>'});$('forecast').innerHTML=html||'<div class="muted">Brak prognozy godzinowej</div>'}
 function renderSun(){const s=data.sun;if(s&&s.daily&&s.daily.time){let k=dayKey(Date.now());let i=s.daily.time.indexOf(k);if(i<0)i=-1;const sunrise=i>=0&&s.daily.sunrise&&s.daily.sunrise[i],sunset=i>=0&&s.daily.sunset&&s.daily.sunset[i];if(sunrise&&sunset){setText('sunrise-line','Wschód '+sunrise.slice(11,16)+' · zachód '+sunset.slice(11,16));const now=Date.now();document.body.classList.toggle('night',now<fromISO(sunrise)||now>=fromISO(sunset));return}}
 const h=Number(warsawParts(Date.now()).hour);document.body.classList.toggle('night',h<7||h>=19);setText('sunrise-line','Wschód i zachód: brak aktualnych danych')}
-function renderAir(){const d=data.air;if(!d||!d.current)return;let a=d.current;const v=Number(a.european_aqi);setText('aqi-number',Number.isFinite(v)?Math.round(v):'—');setText('aqi-label',!Number.isFinite(v)?'Brak indeksu':v<=20?'Dobra':v<=60?'Średnia':'Zła');setText('pm25',Number.isFinite(a.pm2_5)?Number(a.pm2_5).toFixed(1):'—');setText('pm10',Number.isFinite(a.pm10)?Number(a.pm10).toFixed(1):'—');setText('air-source','Open-Meteo / CAMS'+staleText(d))}
+function renderAir(){const d=data.air;if(!d||!d.current)return;let a=d.current;const v=Number(a.european_aqi);setText('aqi-number',Number.isFinite(v)?Math.round(v):'—');setText('aqi-label',!Number.isFinite(v)?'Brak indeksu':v<=20?'Dobra':v<=60?'Średnia':'Zła');setText('pm25',Number.isFinite(a.pm2_5)?Number(a.pm2_5).toFixed(1):'—');setText('pm10',Number.isFinite(a.pm10)?Number(a.pm10).toFixed(1):'—');setText('air-source','CAMS'+staleText(d))}
 function renderRain(){
   const root=$('rain-chart'), w=data.weather;
   setText('rain-source','Open-Meteo'+staleText(w));
