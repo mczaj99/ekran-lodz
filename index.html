@@ -45,15 +45,15 @@
   .part span{font-size:16px;color:var(--muted)}
   #events,#departures{margin-top:17px}
   /* Panel opadów jest w pełni monochromatyczny: kolor akcentowy pozostaje tylko przy najbliższym odjeździe. */
-  .rain-summary{font-size:27px;line-height:1.22;margin:21px 0 9px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:33px}
-  .rain-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:12px;height:242px;min-width:0}
+  .rain-summary{font-size:26px;line-height:1.2;margin:14px 0 6px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-height:31px}
+  .rain-chart{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));column-gap:12px;row-gap:7px;height:272px;min-width:0}
   .rain-hour{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-width:0;text-align:center}
-  .rain-percent{font-size:32px;line-height:39px;font-weight:750;font-variant-numeric:tabular-nums}
-  .rain-graph{height:121px;width:78%;max-width:100px;border:1px solid var(--line);border-radius:9px 9px 5px 5px;background:var(--soft);display:flex;align-items:flex-end;overflow:hidden;margin:5px 0 10px}
+  .rain-percent{font-size:27px;line-height:31px;font-weight:750;font-variant-numeric:tabular-nums}
+  .rain-graph{height:52px;min-height:52px;width:75%;max-width:108px;border:1px solid var(--line);border-radius:9px 9px 5px 5px;background:var(--soft);display:flex;align-items:flex-end;overflow:hidden;margin:3px 0 4px}
   .rain-bar{width:100%;background:var(--muted);opacity:.7;border-radius:5px 5px 0 0;min-height:0}
-  .rain-hour-label{font-size:23px;line-height:28px;font-weight:730;font-variant-numeric:tabular-nums;white-space:nowrap}
-  .rain-amount{font-size:19px;line-height:26px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
-  .rain-note{margin-top:7px;font-size:19px;color:var(--muted);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rain-hour-label{font-size:21px;line-height:25px;font-weight:730;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rain-amount{font-size:18px;line-height:21px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+  .rain-note{margin-top:4px;font-size:18px;color:var(--muted);line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .empty{font-size:26px;line-height:1.35;margin:42px 2px;color:var(--muted)}
   .dep{display:grid;grid-template-columns:100px minmax(0,1fr) 132px;align-items:center;gap:18px;height:83px;border-top:1px solid var(--line);border-radius:9px;padding:0 13px}
   .dep:first-child{border-top:0}
@@ -103,9 +103,9 @@
   </section>
   <section class="bottom" aria-label="Prognoza opadów i odjazdy">
     <article class="card">
-      <div class="card-head"><h2>Opady · najbliższe 6 godzin</h2><span class="source" id="rain-source">Open-Meteo</span></div>
+      <div class="card-head"><h2>Opady · najbliższe 12 godzin</h2><span class="source" id="rain-source">Open-Meteo</span></div>
       <div id="rain-summary" class="rain-summary">Ładowanie prognozy opadów…</div>
-      <div class="rain-chart" id="rain-chart" aria-label="Szansa opadów w sześciu kolejnych godzinach"></div>
+      <div class="rain-chart" id="rain-chart" aria-label="Szansa opadów w dwunastu kolejnych godzinach"></div>
       <div class="rain-note" id="rain-note">Godzina „do” oznacza koniec przedziału godzinowego.</div>
     </article>
     <article class="card">
@@ -185,7 +185,7 @@ function renderRain(){
   // API używa lokalnych godzin Europe/Warsaw. Dane o opadach odnoszą się do godziny POPRZEDZAJĄCEJ znacznik.
   const localNow=dayKey(Date.now())+'T'+fmtTime.format(Date.now());
   const indices=[];
-  for(let i=0;i<h.time.length&&indices.length<6;i++)if(h.time[i]>localNow)indices.push(i);
+  for(let i=0;i<h.time.length&&indices.length<12;i++)if(h.time[i]>localNow)indices.push(i);
   if(!indices.length){
     setText('rain-summary','Nie ma prognozy na kolejne godziny');
     root.innerHTML='<div class="empty">Zapisana prognoza jest już nieaktualna.</div>';
