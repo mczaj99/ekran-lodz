@@ -119,7 +119,7 @@
     </article>
   </section>
   <section class="card departure-card" aria-label="Wspólna lista odjazdów z Legionów – Zachodnia i Zachodnia – Legionów">
-    <div class="card-head"><h2>Najbliższe odjazdy · Legionów / Zachodnia</h2><span class="source" id="transport-source">0637 / 0638 / 1401 · MPK Łódź</span></div>
+    <div class="card-head"><h2>Najbliższe odjazdy · Legionów / Zachodnia</h2><span class="source" id="transport-source">0637 / 1401 · MPK Łódź</span></div>
     <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div>
   </section>
   <footer class="foot"><div class="foot-left"><span>Open-Meteo / CAMS · ZDiT Łódź</span><button class="flat" id="settings-button" type="button">⚙ Ustawienia</button></div><div id="alerts" aria-live="polite">Uruchamianie…</div></footer>
@@ -129,7 +129,7 @@
     <h2 id="settings-title">Ustawienia ekranu</h2>
     <p>Wszystkie ustawienia zapisują się tylko w tej przeglądarce. Nie zmieniamy konfiguracji Workera MPK. Dane pogodowe i opady pobieramy z Open-Meteo.</p>
     <label for="stop-choice">Stanowisko przystanku</label>
-    <select id="stop-choice"><option value="all">Wspólna lista: 0637, 0638 i 1401 → Piotrkowska Centrum</option><option value="both">Tylko Legionów – Zachodnia: 0637 i 0638</option><option value="0637">Tylko 0637</option><option value="0638">Tylko 0638</option><option value="1401">Tylko Zachodnia – Legionów: 1401 → Piotrkowska Centrum</option></select>
+    <select id="stop-choice"><option value="all">Wspólna lista: 0637 i 1401 → Piotrkowska Centrum</option><option value="0637">Tylko Legionów – Zachodnia: 0637</option><option value="1401">Tylko Zachodnia – Legionów: 1401 → Piotrkowska Centrum</option></select>
     <label for="kind-choice">Rodzaj pojazdów</label>
     <select id="kind-choice"><option value="all">Autobusy i tramwaje</option><option value="bus">Tylko autobusy</option><option value="tram">Tylko tramwaje</option></select>
     <label for="proxy-input">Adres pośrednika MPK (Cloudflare Worker)</label>
@@ -150,7 +150,7 @@ const DEFAULT_TRANSPORT_PROXY='https://mpk-lodz.czajkowski-media.workers.dev';
 const $=id=>document.getElementById(id);
 const errors={}; const data={}; let transportBusy=false;
 const previousConfig=read('config')||{};
-let config={stop:!previousConfig.stop||previousConfig.stop==='both'?'all':previousConfig.stop,kind:previousConfig.kind||'all',proxy:previousConfig.proxy||DEFAULT_TRANSPORT_PROXY};
+let config={stop:['0637','1401'].includes(previousConfig.stop)?previousConfig.stop:'all',kind:previousConfig.kind||'all',proxy:previousConfig.proxy||DEFAULT_TRANSPORT_PROXY};
 // Aktualizacja starszych ustawień: pusty adres nie przywraca blokowanego pobierania z miasta.
 if(!config.proxy)config.proxy=DEFAULT_TRANSPORT_PROXY;
 const fmtTime=new Intl.DateTimeFormat('pl-PL',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
@@ -237,8 +237,7 @@ function calcDepartures(){
   const t=data.timetable;
   if(!t||!Array.isArray(t.stops))return[];
   const now=Date.now(),today=dayKey(now),res=[];
-  const allowed=config.stop==='all'?['0637','0638','1401']:
-    config.stop==='both'?['0637','0638']:[config.stop];
+  const allowed=config.stop==='all'?['0637','1401']:[config.stop];
   for(let shift=-1;shift<=1;shift++){
     const date=dayShift(today,shift);
     for(const row of t.stops){
@@ -270,8 +269,7 @@ function calcDepartures(){
 }
 function renderDepartures(){
   const root=$('departures'),t=data.timetable;
-  const platforms=config.stop==='all'?'0637 / 0638 / 1401':
-    config.stop==='both'?'0637 / 0638':config.stop;
+  const platforms=config.stop==='all'?'0637 / 1401':config.stop;
   setText('transport-source',platforms+' · Worker MPK');
   if(!t){
     root.innerHTML='<div class="empty">Brak pobranego rozkładu.<br>Sprawdź ustawienia pośrednika.</div>';
@@ -317,10 +315,10 @@ function scheduleParser(zipped){
         for(const stop of stopRows){
           const id=String(stop.stop_id||''),code=stopCode(stop.stop_code),idCode=stopCode(id);
           const label=normal(stop.stop_name);
-          const platform=(['637','638','1401'].includes(code)?code:
-            ['637','638','1401'].includes(idCode)?idCode:'');
+          const platform=(['637','1401'].includes(code)?code:
+            ['637','1401'].includes(idCode)?idCode:'');
           if(platform&&label.includes('LEGION')&&label.includes('ZACHOD')){
-            const normalized=platform==='637'?'0637':platform==='638'?'0638':'1401';
+            const normalized=platform==='637'?'0637':'1401';
             targets.add(id);platforms[id]=normalized;
           }
           if((code==='2095'||idCode==='2095')&&label.includes('PIOTRKOWSKA')&&label.includes('CENTRUM')){
@@ -328,7 +326,7 @@ function scheduleParser(zipped){
           }
         }
         // Identyfikatory awaryjne, gdy starszy GTFS nie podaje stop_code.
-        for(const p of ['0637','0638','1401']){
+        for(const p of ['0637','1401']){
           for(const id of [p,String(Number(p))]){
             targets.add(id);platforms[id]=p;
           }
@@ -378,7 +376,7 @@ function scheduleParser(zipped){
           if(cycles%4===0)await new Promise(r=>setTimeout(r,0));
         }
         if(tail)handle(tail);
-        if(!arrivals.length)throw new Error('Nie znaleziono kursów dla 0637 / 0638 / 1401');
+        if(!arrivals.length)throw new Error('Nie znaleziono kursów dla 0637 / 1401');
         const tripsNeeded=new Set(arrivals.map(x=>x.trip)),trips={};
         for(const trip of parseSmall(file('trips.txt'))){
           if(tripsNeeded.has(trip.trip_id))trips[trip.trip_id]=trip;
@@ -405,14 +403,14 @@ function scheduleParser(zipped){
             routeType:routeTypes[trip.route_id],headsign:trip.trip_headsign||'Kierunek nieznany',
             service:trip.service_id};
         }).filter(row=>row.platform!=='1401'||row.viaCentre);
-        resolve({stops,calendar,exceptions,savedAt:Date.now(),schemaVersion:2});
+        resolve({stops,calendar,exceptions,savedAt:Date.now(),schemaVersion:3});
       }catch(e){reject(e);}
     });
   });
 }
 function loadZipLib(){if(typeof fflate!=='undefined')return Promise.resolve();return new Promise((res,rej)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js';script.onload=res;script.onerror=()=>rej(new Error('Nie można pobrać biblioteki ZIP'));document.head.appendChild(script)})}
 function transitUrl(name){return (config.proxy||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'')+'/'+name}
-async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&saved.schemaVersion===2&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();ok('rozkład')}catch(e){console.warn('GTFS (adres: '+transitUrl('gtfs')+'):',e);loadingError('rozkład','rozkład: '+(e&&e.message||'błąd odczytu'));renderDepartures()}finally{transportBusy=false}}
+async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&saved.schemaVersion===3&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();ok('rozkład')}catch(e){console.warn('GTFS (adres: '+transitUrl('gtfs')+'):',e);loadingError('rozkład','rozkład: '+(e&&e.message||'błąd odczytu'));renderDepartures()}finally{transportBusy=false}}
 function walkProto(buffer,fn){let pos=0;function varint(){let x=0,mul=1;for(let j=0;j<10&&pos<buffer.length;j++){const b=buffer[pos++];x+=(b&127)*mul;if(!(b&128))return x;mul*=128}throw Error('Błędny protobuf')}while(pos<buffer.length){const tag=varint(),field=tag>>3,wire=tag&7;if(wire===0)fn(field,wire,varint());else if(wire===2){const len=varint();if(pos+len>buffer.length)throw Error('Błędna długość protobuf');fn(field,wire,buffer.subarray(pos,pos+len));pos+=len}else if(wire===1)pos+=8;else if(wire===5)pos+=4;else throw Error('Nieobsługiwane pole protobuf')}}
 function asText(b){return new TextDecoder().decode(b)}
 function tripRealtime(bytes){const output={};const indexByTrip=new Map();if(data.timetable)for(const row of data.timetable.stops){if(!indexByTrip.has(row.trip))indexByTrip.set(row.trip,new Set());indexByTrip.get(row.trip).add(row.stop)}
