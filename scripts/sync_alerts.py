@@ -27,13 +27,28 @@ def fetch_alerts():
     )
     response.raise_for_status()
     soup = BeautifulSoup(response.content, "html.parser")
-    tables = [t for t in soup.find_all("table")
-              if "Nr linii" in t.get_text(" ", strip=True)
-              and "Utrudnienie w ruchu" in t.get_text(" ", strip=True)]
+    # Na stronie MPK nagłówek bywa zapisany jako „Nr\\xa0linii” (twarda
+    # spacja HTML), a w dni bez komunikatów tabela w ogóle nie występuje.
+    # Normalizujemy białe znaki zamiast porównywać surowy HTML.
+    def normal(text):
+        return re.sub(r"\\s+", " ", text.replace("\\xa0", " ")).strip().casefold()
+
+    page_text = normal(soup.get_text(" ", strip=True))
+    tables = [
+        table for table in soup.find_all("table")
+        if "utrudnienie w ruchu" in normal(table.get_text(" ", strip=True))
+        and ("nr linii" in normal(table.get_text(" ", strip=True))
+             or "zmiana sytuacji" in normal(table.get_text(" ", strip=True)))
+    ]
+
     if not tables:
-        if "Brak utrudnień w ruchu" in soup.get_text(" ", strip=True):
+        if re.search(r"brak(?: aktualnych)? utrudnień(?: w ruchu)?", page_text):
             return []
-        raise RuntimeError("Nie znaleziono tabeli utrudnień MPK")
+        title = normal(soup.title.get_text(" ", strip=True)) if soup.title else "(brak tytułu)"
+        raise RuntimeError(
+            "MPK nie zwróciło tabeli ani potwierdzenia braku utrudnień. "
+            f"Tytuł: {title[:90]}; fragment strony: {page_text[-220:]}"
+        )
     alerts = []
     for tr in tables[0].find_all("tr"):
         cells = tr.find_all("td", recursive=False)
