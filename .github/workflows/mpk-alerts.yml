@@ -1,0 +1,29 @@
+name: Aktualizacja utrudnień MPK
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  alerts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Biblioteki
+        run: pip install requests beautifulsoup4
+      - name: Pobierz utrudnienia
+        run: python scripts/sync_alerts.py
+      - name: Publikuj tylko przy zmianie pliku
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add mpk-alerts.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Aktualizuj komunikaty MPK"
+            git push
+          fi
