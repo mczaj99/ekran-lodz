@@ -1,6 +1,15 @@
 {
-  "updatedAt": null,
-  "status": "pending",
+  "updatedAt": "2026-11-02T22:33:03+00:00",
+  "status": "ok",
   "source": "MPK Łódź",
-  "items": []
+  "items": [
+    {
+      "lines": [
+        "77"
+      ],
+      "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
+      "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    }
+  ]
 }
