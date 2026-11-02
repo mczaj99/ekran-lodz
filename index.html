@@ -127,10 +127,10 @@
       <div class="rain-note" id="rain-note">Godzina „do” oznacza koniec godzinowego przedziału.</div>
     </article>
   </section>
-  <section class="card departure-card" aria-label="Wspólna lista odjazdów z Legionów – Zachodnia i Zachodnia – Legionów">
-    <div class="departure-left"><div class="card-head"><h2>Najbliższe odjazdy</h2><span class="source" id="transport-source">0637 / 1401 · MPK Łódź</span></div>
+  <section class="card departure-card" aria-label="Odjazdy ze stanowiska Zachodnia – Legionów 1401">
+    <div class="departure-left"><div class="card-head"><h2>Najbliższe odjazdy · 1401</h2><span class="source" id="transport-source">Zachodnia – Legionów · MPK Łódź</span></div>
     <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div></div>
-    <aside class="trouble-panel" aria-label="Utrudnienia tramwajów z wybranych przystanków"><div class="card-head"><h2>Utrudnienia MPK</h2><span class="source" id="trouble-source">MPK Łódź</span></div><div id="trouble-list" class="trouble-empty">Sprawdzanie komunikatów…</div></aside>
+    <aside class="trouble-panel" aria-label="Utrudnienia tramwajów ze stanowiska 1401"><div class="card-head"><h2>Utrudnienia MPK</h2><span class="source" id="trouble-source">MPK Łódź</span></div><div id="trouble-list" class="trouble-empty">Sprawdzanie komunikatów…</div></aside>
   </section>
   <footer class="foot"><div class="foot-left"><span>Open-Meteo / CAMS · ZDiT Łódź</span><button class="flat" id="settings-button" type="button">⚙ Ustawienia</button></div><div id="alerts" aria-live="polite">Uruchamianie…</div></footer>
 </div>
@@ -139,7 +139,7 @@
     <h2 id="settings-title">Ustawienia ekranu</h2>
     <p>Wszystkie ustawienia zapisują się tylko w tej przeglądarce. Nie zmieniamy konfiguracji Workera MPK. Dane pogodowe i opady pobieramy z Open-Meteo.</p>
     <label for="stop-choice">Stanowisko przystanku</label>
-    <select id="stop-choice"><option value="all">Wspólna lista: 0637 i 1401 → Piotrkowska Centrum</option><option value="0637">Tylko Legionów – Zachodnia: 0637</option><option value="1401">Tylko Zachodnia – Legionów: 1401 → Piotrkowska Centrum</option></select>
+    <select id="stop-choice"><option value="1401">Zachodnia – Legionów · stanowisko 1401 · wszystkie kierunki</option></select>
     <label for="kind-choice">Rodzaj pojazdów</label>
     <select id="kind-choice"><option value="all">Autobusy i tramwaje</option><option value="bus">Tylko autobusy</option><option value="tram">Tylko tramwaje</option></select>
     <label for="proxy-input">Adres pośrednika MPK (Cloudflare Worker)</label>
@@ -160,7 +160,7 @@ const DEFAULT_TRANSPORT_PROXY='https://mpk-lodz.czajkowski-media.workers.dev';
 const $=id=>document.getElementById(id);
 const errors={}; const data={}; let transportBusy=false;
 const previousConfig=read('config')||{};
-let config={stop:['0637','1401'].includes(previousConfig.stop)?previousConfig.stop:'all',kind:previousConfig.kind||'all',proxy:previousConfig.proxy||DEFAULT_TRANSPORT_PROXY};
+let config={stop:'1401',kind:'all',proxy:previousConfig.proxy||DEFAULT_TRANSPORT_PROXY};
 // Aktualizacja starszych ustawień: pusty adres nie przywraca blokowanego pobierania z miasta.
 if(!config.proxy)config.proxy=DEFAULT_TRANSPORT_PROXY;
 const fmtTime=new Intl.DateTimeFormat('pl-PL',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
@@ -247,7 +247,7 @@ function calcDepartures(){
   const t=data.timetable;
   if(!t||!Array.isArray(t.stops))return[];
   const now=Date.now(),today=dayKey(now),res=[];
-  const allowed=config.stop==='all'?['0637','1401']:[config.stop];
+  const allowed=['1401'];
   for(let shift=-1;shift<=1;shift++){
     const date=dayShift(today,shift);
     for(const row of t.stops){
@@ -255,8 +255,6 @@ function calcDepartures(){
       const type=Number(row.routeType);
       const bus=type===3||(type>=700&&type<800);
       const tram=type===0||(type>=900&&type<1000);
-      // Stanowisko 1401: tylko tramwaje, których GTFS potwierdza późniejszy przejazd przez 2095.
-      if(row.platform==='1401'&&(!tram||row.viaCentre!==true))continue;
       if(config.kind==='bus'&&!bus)continue;
       if(config.kind==='tram'&&!tram)continue;
       if(!activity(row.service,date,t.calendar,t.exceptions))continue;
@@ -279,8 +277,7 @@ function calcDepartures(){
 }
 function renderDepartures(){
   const root=$('departures'),t=data.timetable;
-  const platforms=config.stop==='all'?'0637 / 1401':config.stop;
-  setText('transport-source',platforms+' · Worker MPK');
+  setText('transport-source','Zachodnia – Legionów · 1401 · Worker MPK');
   if(!t){
     root.innerHTML='<div class="empty">Brak pobranego rozkładu.<br>Sprawdź ustawienia pośrednika.</div>';
     return;
@@ -292,7 +289,7 @@ function renderDepartures(){
   }
   root.innerHTML=deps.map(d=>{
     const mins=Math.max(0,Math.ceil((d.when-Date.now())/60000));
-    const stopName=d.platform==='1401'?'Zachodnia – Legionów':'Legionów – Zachodnia';
+    const stopName='Zachodnia – Legionów';
     return '<div class="dep"><div class="line-no">'+escapeHTML(d.line)+'</div>'+
       '<div><div class="direction" title="'+escapeHTML(d.headsign)+'">'+
       escapeHTML(d.headsign||'Kierunek nieznany')+'</div>'+
@@ -316,7 +313,7 @@ function renderTroubles(){
    el.className='trouble-empty';el.textContent='Oczekiwanie na rozkład linii…';return;
  }
  const lines=new Set(t.stops.filter(x=>
-   (x.platform==='0637'||x.platform==='1401'&&x.viaCentre===true)&&
+   x.platform==='1401'&&
    (Number(x.routeType)===0||Number(x.routeType)>=900&&Number(x.routeType)<1000)
  ).map(x=>String(x.route).trim().toUpperCase()));
  const relevant=(notices.items||[]).filter(item=>
@@ -450,15 +447,15 @@ function scheduleParser(zipped){
           return {...a,viaCentre,route:routes[trip.route_id]||'?',
             routeType:routeTypes[trip.route_id],headsign:trip.trip_headsign||'Kierunek nieznany',
             service:trip.service_id};
-        }).filter(row=>row.platform!=='1401'||row.viaCentre);
-        resolve({stops,calendar,exceptions,savedAt:Date.now(),schemaVersion:3});
+        });
+        resolve({stops,calendar,exceptions,savedAt:Date.now(),schemaVersion:4});
       }catch(e){reject(e);}
     });
   });
 }
 function loadZipLib(){if(typeof fflate!=='undefined')return Promise.resolve();return new Promise((res,rej)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js';script.onload=res;script.onerror=()=>rej(new Error('Nie można pobrać biblioteki ZIP'));document.head.appendChild(script)})}
 function transitUrl(name){return (config.proxy||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'')+'/'+name}
-async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&saved.schemaVersion===3&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();renderTroubles();ok('rozkład')}catch(e){console.warn('GTFS (adres: '+transitUrl('gtfs')+'):',e);loadingError('rozkład','rozkład: '+(e&&e.message||'błąd odczytu'));renderDepartures()}finally{transportBusy=false}}
+async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&saved.schemaVersion===4&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();renderTroubles();ok('rozkład')}catch(e){console.warn('GTFS (adres: '+transitUrl('gtfs')+'):',e);loadingError('rozkład','rozkład: '+(e&&e.message||'błąd odczytu'));renderDepartures()}finally{transportBusy=false}}
 function walkProto(buffer,fn){let pos=0;function varint(){let x=0,mul=1;for(let j=0;j<10&&pos<buffer.length;j++){const b=buffer[pos++];x+=(b&127)*mul;if(!(b&128))return x;mul*=128}throw Error('Błędny protobuf')}while(pos<buffer.length){const tag=varint(),field=tag>>3,wire=tag&7;if(wire===0)fn(field,wire,varint());else if(wire===2){const len=varint();if(pos+len>buffer.length)throw Error('Błędna długość protobuf');fn(field,wire,buffer.subarray(pos,pos+len));pos+=len}else if(wire===1)pos+=8;else if(wire===5)pos+=4;else throw Error('Nieobsługiwane pole protobuf')}}
 function asText(b){return new TextDecoder().decode(b)}
 function tripRealtime(bytes){const output={};const indexByTrip=new Map();if(data.timetable)for(const row of data.timetable.stops){if(!indexByTrip.has(row.trip))indexByTrip.set(row.trip,new Set());indexByTrip.get(row.trip).add(row.stop)}
@@ -466,9 +463,9 @@ walkProto(bytes,(field,wire,entity)=>{if(field!==2||wire!==2)return;walkProto(en
 async function refreshRealtime(){if(!data.timetable)return;try{const bytes=await fetchBytes(transitUrl('updates'),18000);data.live=tripRealtime(bytes);ok('odjazdy na żywo');renderDepartures()}catch(e){console.warn('GTFS-RT (adres: '+transitUrl('updates')+'):',e);loadingError('odjazdy na żywo','odjazdy na żywo: '+(e&&e.message||'błąd odczytu'));renderDepartures()}}
 function initCache(){for(const k of ['weather','sun','air','timetable'])data[k]=read(k)||null;try{localStorage.removeItem('lodzTv_calendar')}catch(_){/* Pamięć może być wyłączona */}weatherRender();if(data.air)renderAir();renderSun();renderDepartures();data.troubles=read('troubles')||null;renderTroubles()}
 async function refreshAll(){updateJSON('weather',WEATHER,d=>d&&d.current&&d.hourly&&Array.isArray(d.hourly.precipitation_probability)&&Array.isArray(d.hourly.precipitation),weatherRender);updateJSON('sun',SUN,d=>d&&d.daily&&d.daily.sunrise&&d.daily.sunset,renderSun);updateJSON('air',AIR,d=>d&&d.current&&Number.isFinite(d.current.european_aqi),renderAir);refreshSchedule().then(refreshRealtime);refreshTroubles()}
-function settingsOpen(){ $('stop-choice').value=config.stop||'all';$('kind-choice').value=config.kind||'all';$('proxy-input').value=config.proxy||DEFAULT_TRANSPORT_PROXY;setText('settings-note','');$('settings').classList.add('open');$('settings').setAttribute('aria-hidden','false')}
+function settingsOpen(){ $('stop-choice').value='1401';$('kind-choice').value=config.kind||'all';$('proxy-input').value=config.proxy||DEFAULT_TRANSPORT_PROXY;setText('settings-note','');$('settings').classList.add('open');$('settings').setAttribute('aria-hidden','false')}
 function settingsClose(){$('settings').classList.remove('open');$('settings').setAttribute('aria-hidden','true')}
-function saveConfig(){const proxy=($('proxy-input').value.trim()||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'');if(proxy&&!/^https:\/\/[^/]+$/i.test(proxy)){setText('settings-note','Pośrednik musi mieć adres HTTPS bez dodatkowej ścieżki.');return}const previousProxy=config.proxy||'';config={stop:$('stop-choice').value,kind:$('kind-choice').value,proxy:proxy};write('config',config);settingsClose();renderDepartures();refreshSchedule(previousProxy!==proxy).then(refreshRealtime)}
+function saveConfig(){const proxy=($('proxy-input').value.trim()||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'');if(proxy&&!/^https:\/\/[^/]+$/i.test(proxy)){setText('settings-note','Pośrednik musi mieć adres HTTPS bez dodatkowej ścieżki.');return}const previousProxy=config.proxy||'';config={stop:'1401',kind:$('kind-choice').value,proxy:proxy};write('config',config);settingsClose();renderDepartures();refreshSchedule(previousProxy!==proxy).then(refreshRealtime)}
 $('settings-button').addEventListener('click',settingsOpen);$('close-settings').addEventListener('click',settingsClose);$('save-settings').addEventListener('click',saveConfig);document.addEventListener('keydown',e=>{if(e.key==='Escape')settingsClose();if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey&&!/input|select/i.test(document.activeElement.tagName))settingsOpen()});addEventListener('resize',scale);scale();initCache();tick();refreshAll();setInterval(refreshAll,300000);setTimeout(()=>{tick();setInterval(tick,60000)},60000-Date.now()%60000);
 })();
 </script>
