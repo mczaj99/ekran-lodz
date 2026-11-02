@@ -60,7 +60,16 @@
   .rain-hour-label{font-size:17px;white-space:nowrap;font-weight:700;line-height:21px;font-variant-numeric:tabular-nums}
   .rain-amount{font-size:16px;white-space:nowrap;line-height:19px;font-variant-numeric:tabular-nums;color:var(--muted)}
   .rain-note{font-size:16px;line-height:1.1;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .departure-card{padding:16px 28px 14px}
+  .departure-card{padding:16px 22px 14px;display:grid;grid-template-columns:minmax(0,1.63fr) minmax(0,1fr);gap:22px}
+  .departure-left{min-width:0;min-height:0}
+  .trouble-panel{min-width:0;min-height:0;border-left:1px solid var(--line);padding-left:22px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+  .trouble-panel h2{font-size:29px}
+  .trouble-box{padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+  .trouble-lines{font-size:21px;font-weight:750;margin-bottom:7px}
+  .trouble-message{font-size:19px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+  .trouble-meta{font-size:16px;line-height:1.2;color:var(--muted);margin-top:8px}
+  .trouble-empty{font-size:23px;line-height:1.35;color:var(--muted);padding:18px 5px}
+  .trouble-panel .source{font-size:15px}
   .departure-card .card-head{margin-bottom:10px}
   .departure-card h2{font-size:32px}
   #departures{display:flex;flex-direction:column;gap:5px;min-height:0}
@@ -119,8 +128,9 @@
     </article>
   </section>
   <section class="card departure-card" aria-label="Wspólna lista odjazdów z Legionów – Zachodnia i Zachodnia – Legionów">
-    <div class="card-head"><h2>Najbliższe odjazdy · Legionów / Zachodnia</h2><span class="source" id="transport-source">0637 / 1401 · MPK Łódź</span></div>
-    <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div>
+    <div class="departure-left"><div class="card-head"><h2>Najbliższe odjazdy</h2><span class="source" id="transport-source">0637 / 1401 · MPK Łódź</span></div>
+    <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div></div>
+    <aside class="trouble-panel" aria-label="Utrudnienia tramwajów z wybranych przystanków"><div class="card-head"><h2>Utrudnienia MPK</h2><span class="source" id="trouble-source">MPK Łódź</span></div><div id="trouble-list" class="trouble-empty">Sprawdzanie komunikatów…</div></aside>
   </section>
   <footer class="foot"><div class="foot-left"><span>Open-Meteo / CAMS · ZDiT Łódź</span><button class="flat" id="settings-button" type="button">⚙ Ustawienia</button></div><div id="alerts" aria-live="polite">Uruchamianie…</div></footer>
 </div>
@@ -292,6 +302,44 @@ function renderDepartures(){
       '<div class="eta">'+mins+' min<small>do odjazdu</small></div></div>';
   }).join('');
 }
+function renderTroubles(){
+ const el=$('trouble-list');if(!el)return;
+ const notices=data.troubles;
+ const age=notices&&notices.updatedAt?Date.now()-Date.parse(notices.updatedAt):Infinity;
+ const fresh=notices&&notices.status==='ok'&&Number.isFinite(age)&&age>=0&&age<45*60000;
+ setText('trouble-source',fresh?'MPK · '+fmtTime.format(Date.parse(notices.updatedAt)):'Brak świeżych danych');
+ if(!fresh){
+   el.className='trouble-empty';el.textContent='Nie można potwierdzić aktualnych utrudnień.';return;
+ }
+ const t=data.timetable;
+ if(!t||!Array.isArray(t.stops)){
+   el.className='trouble-empty';el.textContent='Oczekiwanie na rozkład linii…';return;
+ }
+ const lines=new Set(t.stops.filter(x=>
+   (x.platform==='0637'||x.platform==='1401'&&x.viaCentre===true)&&
+   (Number(x.routeType)===0||Number(x.routeType)>=900&&Number(x.routeType)<1000)
+ ).map(x=>String(x.route).trim().toUpperCase()));
+ const relevant=(notices.items||[]).filter(item=>
+   Array.isArray(item.lines)&&item.lines.some(n=>lines.has(String(n).trim().toUpperCase()))
+ ).slice(0,2);
+ if(!relevant.length){
+   el.className='trouble-empty';
+   el.textContent='Brak zgłoszonych utrudnień dla tych linii w źródle MPK.';
+   return;
+ }
+ el.className='';
+ el.innerHTML=relevant.map(item=>'<div class="trouble-box"><div class="trouble-lines">Linie '+
+ escapeHTML(item.lines.filter(n=>lines.has(String(n).trim().toUpperCase())).join(', '))+
+ '</div><div class="trouble-message">'+escapeHTML(item.message||'Komunikat MPK')+
+ '</div><div class="trouble-meta">Informacja MPK · sprawdź szczegóły na stronie przewoźnika</div></div>').join('');
+}
+async function refreshTroubles(){
+ try{
+  const next=await fetchJSON('./mpk-alerts.json?cb='+Date.now(),12000);
+  if(!next||next.status!=='ok'||!Array.isArray(next.items))throw Error('Niedostępne dane');
+  data.troubles=next;write('troubles',next);ok('utrudnienia');renderTroubles();
+ }catch(e){loadingError('utrudnienia','utrudnienia');renderTroubles();}
+}
 async function fetchJSON(url,timeout=15000,opts={}){const ctl=new AbortController(),id=setTimeout(()=>ctl.abort(),timeout);try{const r=await fetch(url,{...opts,signal:ctl.signal,cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(id)}}
 async function fetchBytes(url,timeout=25000){const ctl=new AbortController(),id=setTimeout(()=>ctl.abort(),timeout);try{const r=await fetch(url,{signal:ctl.signal});if(!r.ok)throw new Error('HTTP '+r.status);return new Uint8Array(await r.arrayBuffer())}finally{clearTimeout(id)}}
 async function updateJSON(key,url,validate,render){try{const val=await fetchJSON(url);if(!validate(val))throw new Error('Niepełne dane');val.savedAt=Date.now();data[key]=val;write(key,val);ok(key==='sun'?'słońce':key==='weather'?'pogoda':'powietrze');render()}catch(e){loadingError(key==='sun'?'słońce':key==='weather'?'pogoda':'powietrze',key==='sun'?'słońce':key==='weather'?'pogoda':'powietrze');render()}}
@@ -410,14 +458,14 @@ function scheduleParser(zipped){
 }
 function loadZipLib(){if(typeof fflate!=='undefined')return Promise.resolve();return new Promise((res,rej)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js';script.onload=res;script.onerror=()=>rej(new Error('Nie można pobrać biblioteki ZIP'));document.head.appendChild(script)})}
 function transitUrl(name){return (config.proxy||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'')+'/'+name}
-async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&saved.schemaVersion===3&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();ok('rozkład')}catch(e){console.warn('GTFS (adres: '+transitUrl('gtfs')+'):',e);loadingError('rozkład','rozkład: '+(e&&e.message||'błąd odczytu'));renderDepartures()}finally{transportBusy=false}}
+async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&saved.schemaVersion===3&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();renderTroubles();ok('rozkład')}catch(e){console.warn('GTFS (adres: '+transitUrl('gtfs')+'):',e);loadingError('rozkład','rozkład: '+(e&&e.message||'błąd odczytu'));renderDepartures()}finally{transportBusy=false}}
 function walkProto(buffer,fn){let pos=0;function varint(){let x=0,mul=1;for(let j=0;j<10&&pos<buffer.length;j++){const b=buffer[pos++];x+=(b&127)*mul;if(!(b&128))return x;mul*=128}throw Error('Błędny protobuf')}while(pos<buffer.length){const tag=varint(),field=tag>>3,wire=tag&7;if(wire===0)fn(field,wire,varint());else if(wire===2){const len=varint();if(pos+len>buffer.length)throw Error('Błędna długość protobuf');fn(field,wire,buffer.subarray(pos,pos+len));pos+=len}else if(wire===1)pos+=8;else if(wire===5)pos+=4;else throw Error('Nieobsługiwane pole protobuf')}}
 function asText(b){return new TextDecoder().decode(b)}
 function tripRealtime(bytes){const output={};const indexByTrip=new Map();if(data.timetable)for(const row of data.timetable.stops){if(!indexByTrip.has(row.trip))indexByTrip.set(row.trip,new Set());indexByTrip.get(row.trip).add(row.stop)}
 walkProto(bytes,(field,wire,entity)=>{if(field!==2||wire!==2)return;walkProto(entity,(f,w,tu)=>{if(f!==3||w!==2)return;let trip='', updates=[];walkProto(tu,(sf,sw,sval)=>{if(sf===1&&sw===2)walkProto(sval,(tf,tw,tv)=>{if(tf===1&&tw===2)trip=asText(tv)});if(sf===2&&sw===2){let stop='',time=null;walkProto(sval,(uf,uw,uv)=>{if(uf===4&&uw===2)stop=asText(uv);if((uf===2||uf===3)&&uw===2)walkProto(uv,(ef,ew,ev)=>{if(ef===2&&ew===0)time=ev*1000})});if(stop&&time)updates.push([stop,time])}});if(trip&&indexByTrip.has(trip))for(const [stop,time]of updates)if(indexByTrip.get(trip).has(stop))output[trip+'|'+stop]=time})});return output}
 async function refreshRealtime(){if(!data.timetable)return;try{const bytes=await fetchBytes(transitUrl('updates'),18000);data.live=tripRealtime(bytes);ok('odjazdy na żywo');renderDepartures()}catch(e){console.warn('GTFS-RT (adres: '+transitUrl('updates')+'):',e);loadingError('odjazdy na żywo','odjazdy na żywo: '+(e&&e.message||'błąd odczytu'));renderDepartures()}}
-function initCache(){for(const k of ['weather','sun','air','timetable'])data[k]=read(k)||null;try{localStorage.removeItem('lodzTv_calendar')}catch(_){/* Pamięć może być wyłączona */}weatherRender();if(data.air)renderAir();renderSun();renderDepartures()}
-async function refreshAll(){updateJSON('weather',WEATHER,d=>d&&d.current&&d.hourly&&Array.isArray(d.hourly.precipitation_probability)&&Array.isArray(d.hourly.precipitation),weatherRender);updateJSON('sun',SUN,d=>d&&d.daily&&d.daily.sunrise&&d.daily.sunset,renderSun);updateJSON('air',AIR,d=>d&&d.current&&Number.isFinite(d.current.european_aqi),renderAir);refreshSchedule().then(refreshRealtime)}
+function initCache(){for(const k of ['weather','sun','air','timetable'])data[k]=read(k)||null;try{localStorage.removeItem('lodzTv_calendar')}catch(_){/* Pamięć może być wyłączona */}weatherRender();if(data.air)renderAir();renderSun();renderDepartures();data.troubles=read('troubles')||null;renderTroubles()}
+async function refreshAll(){updateJSON('weather',WEATHER,d=>d&&d.current&&d.hourly&&Array.isArray(d.hourly.precipitation_probability)&&Array.isArray(d.hourly.precipitation),weatherRender);updateJSON('sun',SUN,d=>d&&d.daily&&d.daily.sunrise&&d.daily.sunset,renderSun);updateJSON('air',AIR,d=>d&&d.current&&Number.isFinite(d.current.european_aqi),renderAir);refreshSchedule().then(refreshRealtime);refreshTroubles()}
 function settingsOpen(){ $('stop-choice').value=config.stop||'all';$('kind-choice').value=config.kind||'all';$('proxy-input').value=config.proxy||DEFAULT_TRANSPORT_PROXY;setText('settings-note','');$('settings').classList.add('open');$('settings').setAttribute('aria-hidden','false')}
 function settingsClose(){$('settings').classList.remove('open');$('settings').setAttribute('aria-hidden','true')}
 function saveConfig(){const proxy=($('proxy-input').value.trim()||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'');if(proxy&&!/^https:\/\/[^/]+$/i.test(proxy)){setText('settings-note','Pośrednik musi mieć adres HTTPS bez dodatkowej ścieżki.');return}const previousProxy=config.proxy||'';config={stop:$('stop-choice').value,kind:$('kind-choice').value,proxy:proxy};write('config',config);settingsClose();renderDepartures();refreshSchedule(previousProxy!==proxy).then(refreshRealtime)}
