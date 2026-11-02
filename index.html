@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>Domowy ekran — Łódź Śródmieście</title>
+<style>
+  :root{font-family:Arial,Helvetica,sans-serif;color-scheme:light;}
+  *{box-sizing:border-box}
+  html,body{width:100%;height:100%;margin:0;overflow:hidden}
+  body{--bg:#f3f5f8;--surface:#fff;--fg:#161c28;--muted:#667080;--line:#dce1e8;--soft:#f7f8fa;--accent:#2459cd;--accentbg:#edf3ff;background:var(--bg);color:var(--fg)}
+  body.night{--bg:#0c111a;--surface:#181f2a;--fg:#f0f3fa;--muted:#a8b2c1;--line:#333e4d;--soft:#202a36;--accent:#88b5ff;--accentbg:#213552;color-scheme:dark}
+  #screen{width:1920px;height:1080px;position:absolute;top:0;left:0;transform-origin:top left;display:grid;grid-template-rows:139px 323px 439px 35px;gap:19px;padding:40px 55px;overflow:hidden}
+  .top{display:flex;align-items:center;justify-content:space-between;min-width:0;gap:35px}
+  .eyebrow{font-size:22px;letter-spacing:2px;text-transform:uppercase;font-weight:700;color:var(--muted)}
+  .location{font-size:33px;font-weight:750;letter-spacing:.1px;margin-top:9px}
+  .clockbox{text-align:right;display:flex;align-items:center;gap:27px}
+  #clock{font-size:112px;line-height:1;font-variant-numeric:tabular-nums;font-weight:750;letter-spacing:-5px}
+  #date{font-size:26px;color:var(--muted);line-height:1.33;max-width:270px;text-align:left;text-transform:capitalize}
+  .columns{display:grid;grid-template-columns:1.28fr .72fr;gap:22px;min-width:0;min-height:0}
+  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:22px;min-width:0;min-height:0}
+  .card{border:1px solid var(--line);border-radius:26px;background:var(--surface);padding:28px 33px;overflow:hidden;min-width:0;min-height:0}
+  .card-head{display:flex;align-items:center;justify-content:space-between;gap:14px;min-width:0}
+  h2{font-size:29px;line-height:1.13;margin:0;font-weight:750}
+  .source{font-size:18px;color:var(--muted);text-align:right;white-space:nowrap}
+  .wx-top{height:158px;display:flex;align-items:center;gap:21px;min-width:0}
+  .wx-icon{font-size:98px;width:118px;line-height:1;text-align:center;filter:grayscale(1);flex-shrink:0}
+  .temp{font-size:110px;font-weight:740;letter-spacing:-5px;line-height:1;min-width:220px;font-variant-numeric:tabular-nums}
+  .wx-extra{font-size:26px;line-height:1.4;min-width:0}
+  .muted{color:var(--muted)}
+  .forecast{border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(5,1fr);padding-top:16px;gap:12px}
+  .forecast .slot{display:flex;align-items:center;gap:12px;justify-content:center;min-width:0}
+  .forecast .ficon{font-size:35px;filter:grayscale(1)}
+  .forecast .ftext{font-size:23px;font-weight:730;line-height:1.33;font-variant-numeric:tabular-nums}
+  .forecast .ftext small{font-size:19px;display:block;font-weight:500;color:var(--muted)}
+  .aqi-main{display:flex;align-items:center;gap:26px;margin-top:13px;margin-bottom:21px}
+  #aqi-number{font-size:99px;line-height:1;font-weight:740;letter-spacing:-4px;min-width:148px}
+  #aqi-label{font-size:34px;font-weight:700;margin-bottom:7px}
+  .aqi-sub{font-size:20px;color:var(--muted);line-height:1.35}
+  .aqi-parts{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+  .part{border:1px solid var(--line);border-radius:17px;padding:14px 17px;background:var(--soft)}
+  .part small{display:block;font-size:20px;color:var(--muted);margin-bottom:5px}
+  .part strong{font-size:38px;letter-spacing:-1px;font-variant-numeric:tabular-nums}
+  .part span{font-size:16px;color:var(--muted)}
+  #events,#departures{margin-top:17px}
+  .entry{display:flex;align-items:center;gap:22px;border-top:1px solid var(--line);height:80px;padding:0 15px;min-width:0;border-radius:9px}
+  .entry:first-child{border-top:0}
+  .entry.primary{background:var(--accentbg);border-left:6px solid var(--accent);padding-left:9px;color:var(--fg)}
+  .event-when{font-size:22px;font-variant-numeric:tabular-nums;font-weight:700;min-width:126px;line-height:1.3}
+  .entry .dayname{display:block;font-size:19px;font-weight:500;color:var(--muted)}
+  .event-title{font-size:27px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+  .empty{font-size:26px;line-height:1.35;margin:42px 2px;color:var(--muted)}
+  .dep{display:grid;grid-template-columns:100px minmax(0,1fr) 132px;align-items:center;gap:18px;height:83px;border-top:1px solid var(--line);border-radius:9px;padding:0 13px}
+  .dep:first-child{border-top:0}
+  .dep.primary{background:var(--accentbg);border-left:6px solid var(--accent);padding-left:7px}
+  .line-no{font-size:42px;font-weight:800;white-space:nowrap}
+  .direction{font-size:26px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .detail{font-size:19px;color:var(--muted);margin-top:3px}
+  .eta{text-align:right;font-size:41px;font-weight:800;line-height:1.05;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .eta small{display:block;font-size:19px;font-weight:500;color:var(--muted);margin-top:3px}
+  .foot{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--muted);font-size:17px;min-width:0}
+  #alerts{font-size:19px;max-width:750px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:right}
+  button{font:inherit;cursor:pointer;color:inherit}
+  .flat{border:0;background:transparent;padding:7px 9px;color:var(--muted);font-size:19px}
+  .flat:focus-visible,.flat:hover{outline:2px solid var(--accent);border-radius:8px}
+  .cta{background:var(--accentbg);border:1px solid var(--accent);border-radius:12px;font-size:22px;padding:10px 16px;margin-top:10px;color:var(--fg)}
+  #settings{position:fixed;inset:0;display:none;z-index:100;background:rgba(0,0,0,.75);justify-content:center;align-items:center;padding:24px}
+  #settings.open{display:flex}
+  .modal{width:min(850px,100%);max-height:94vh;overflow:auto;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:34px 42px;font-size:20px}
+  .modal h2{font-size:32px;margin-bottom:15px}
+  .modal p{line-height:1.4;color:var(--muted)}
+  .modal label{display:block;font-size:21px;font-weight:700;margin:17px 0 6px}
+  .modal input,.modal select{width:100%;border:1px solid var(--line);background:var(--soft);color:var(--fg);font:inherit;padding:13px;border-radius:10px}
+  .modal .buttons{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:20px}
+  .modal .buttons button{font-size:21px;background:var(--soft);padding:14px 23px;border:1px solid var(--line);border-radius:12px}
+  .modal .buttons button.save{background:var(--accentbg);border-color:var(--accent)}
+  .tiny{font-size:18px!important}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+</head>
+<body>
+<div id="screen" role="main" aria-label="Domowy ekran informacyjny">
+  <header class="top">
+    <div><div class="eyebrow">Domowy ekran · Łódź</div><div class="location">Śródmieście <span class="muted">/ Legionów – Zachodnia</span></div></div>
+    <div class="clockbox"><div id="clock">--:--</div><div id="date">Ładowanie daty…</div></div>
+  </header>
+  <section class="columns" aria-label="Pogoda i jakość powietrza">
+    <article class="card">
+      <div class="card-head"><h2>Pogoda w Łodzi</h2><span class="source" id="weather-source">Open-Meteo</span></div>
+      <div class="wx-top"><div class="wx-icon" id="weather-icon">◌</div><div class="temp" id="temperature">—°</div><div class="wx-extra"><div id="weather-description">Oczekiwanie na pogodę</div><div class="muted" id="feels-like">Temperatura odczuwalna: —</div><div class="muted" id="sunrise-line">Słońce: —</div></div></div>
+      <div class="forecast" id="forecast"><div class="muted">Prognoza godzinowa</div></div>
+    </article>
+    <article class="card">
+      <div class="card-head"><h2>Jakość powietrza</h2><span class="source" id="air-source">Open-Meteo / CAMS</span></div>
+      <div class="aqi-main"><div id="aqi-number">—</div><div><div id="aqi-label">Brak danych</div><div class="aqi-sub">Europejski indeks jakości powietrza (EAQI)</div></div></div>
+      <div class="aqi-parts"><div class="part"><small>PM2.5</small><strong id="pm25">—</strong> <span>µg/m³</span></div><div class="part"><small>PM10</small><strong id="pm10">—</strong> <span>µg/m³</span></div></div>
+    </article>
+  </section>
+  <section class="bottom" aria-label="Kalendarz i odjazdy">
+    <article class="card">
+      <div class="card-head"><h2>Kalendarz · dziś i jutro</h2><span class="source" id="calendar-source">Google Calendar</span></div>
+      <div id="events"><div class="empty">Ładowanie wydarzeń…</div></div>
+    </article>
+    <article class="card">
+      <div class="card-head"><h2>Najbliższe odjazdy</h2><span class="source" id="transport-source">Legionów – Zachodnia · 0637 / 0638</span></div>
+      <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div>
+    </article>
+  </section>
+  <footer class="foot"><div>Źródła: Open-Meteo / CAMS · ZDiT Łódź (GTFS) · Google Calendar <button class="flat" id="settings-button" type="button">⚙ Ustawienia</button></div><div id="alerts" aria-live="polite">Uruchamianie…</div></footer>
+</div>
+<div id="settings" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <h2 id="settings-title">Ustawienia ekranu</h2>
+    <p>Te ustawienia są zapisywane wyłącznie w pamięci tej przeglądarki. Nie wpisuj tu hasła Google ani żadnego tajnego klucza.</p>
+    <label for="stop-choice">Stanowisko przystanku</label>
+    <select id="stop-choice"><option value="both">Oba stanowiska: 0637 i 0638</option><option value="0637">Tylko 0637</option><option value="0638">Tylko 0638</option></select>
+    <label for="kind-choice">Rodzaj pojazdów</label>
+    <select id="kind-choice"><option value="all">Autobusy i tramwaje</option><option value="bus">Tylko autobusy</option><option value="tram">Tylko tramwaje</option></select>
+    <label for="proxy-input">Adres pośrednika transportu (Cloudflare Worker, opcjonalnie)</label>
+    <input id="proxy-input" spellcheck="false" placeholder="https://twoja-nazwa.twoj-subdomain.workers.dev">
+    <label for="google-input">Identyfikator klienta Google OAuth (nie jest hasłem)</label>
+    <input id="google-input" spellcheck="false" placeholder="123456789-abc.apps.googleusercontent.com">
+    <p class="tiny">Po zapisaniu możesz połączyć kalendarz. Google nigdy nie przekazuje hasła tej stronie. Przy braku pośrednika ekran spróbuje pobrać GTFS bezpośrednio, ale serwer miasta może zablokować to w przeglądarce (CORS).</p>
+    <div class="buttons"><button id="close-settings" type="button">Zamknij</button><button id="connect-google" type="button">Połącz Google</button><button id="save-settings" class="save" type="button">Zapisz i odśwież</button></div>
+    <p id="settings-note" class="tiny" aria-live="polite"></p>
+  </div>
+</div>
+<script>
+(function(){
+'use strict';
+const TZ='Europe/Warsaw', LAT=51.7705, LON=19.4555;
+const WEATHER='https://api.open-meteo.com/v1/forecast?latitude='+LAT+'&longitude='+LON+'&current=temperature_2m,apparent_temperature,weather_code,relative_humidity_2m&hourly=temperature_2m,precipitation_probability,weather_code&timezone=Europe%2FWarsaw&forecast_days=3';
+const SUN='https://api.open-meteo.com/v1/forecast?latitude='+LAT+'&longitude='+LON+'&daily=sunrise,sunset&timezone=Europe%2FWarsaw&forecast_days=3';
+const AIR='https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+LAT+'&longitude='+LON+'&current=european_aqi,pm2_5,pm10&timezone=Europe%2FWarsaw';
+const CITY_GTFS='https://otwarte.miasto.lodz.pl/wp-content/uploads/2025/06/GTFS.zip';
+const CITY_REALTIME='https://otwarte.miasto.lodz.pl/wp-content/uploads/2025/06/trip_updates.bin';
+const $=id=>document.getElementById(id);
+const errors={}; const data={}; let accessToken='', tokenExpires=0, tokenClient=null, transportBusy=false;
+let config=read('config')||{stop:'both',kind:'all',proxy:'',google:''};
+const fmtTime=new Intl.DateTimeFormat('pl-PL',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+const fmtDate=new Intl.DateTimeFormat('pl-PL',{timeZone:TZ,weekday:'long',day:'numeric',month:'long',year:'numeric'});
+const fmtParts=new Intl.DateTimeFormat('en-CA',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
+let fmtOffset=null;try{fmtOffset=new Intl.DateTimeFormat('en-US',{timeZone:TZ,timeZoneName:'shortOffset',hour:'2-digit'})}catch(_){/* Starsze przeglądarki TV */}
+const fmtZoneParts=new Intl.DateTimeFormat('en-GB',{timeZone:TZ,year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hourCycle:'h23'});
+function read(k){try{return JSON.parse(localStorage.getItem('lodzTv_'+k)||'null')}catch(_){return null}}
+function write(k,v){try{localStorage.setItem('lodzTv_'+k,JSON.stringify(v));return true}catch(_){return false}}
+function setText(id,v){$(id).textContent=v}
+function escapeHTML(v){return String(v==null?'':v).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function pad(n){return String(n).padStart(2,'0')}
+function warsawParts(t){let p={};fmtParts.formatToParts(new Date(t)).forEach(a=>{if(a.type!=='literal')p[a.type]=a.value});return p}
+function dayKey(t){const p=warsawParts(t);return p.year+'-'+p.month+'-'+p.day}
+function dayShift(s,shift){const d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+shift);return d.toISOString().slice(0,10)}
+function offsetMin(t){if(fmtOffset){let raw=fmtOffset.formatToParts(new Date(t)).find(x=>x.type==='timeZoneName');let m=(raw&&raw.value||'').match(/GMT([+-])(\d{1,2})(?::(\d{2}))?/);if(m)return (m[1]==='-'?-1:1)*(Number(m[2])*60+Number(m[3]||0))}const p={};fmtZoneParts.formatToParts(new Date(t)).forEach(x=>{if(x.type!=='literal')p[x.type]=x.value});return Math.round((Date.UTC(+p.year,+p.month-1,+p.day,+p.hour%24,+p.minute,+p.second)-t)/60000)}
+function zonedEpoch(s,minute){const [y,m,d]=s.split('-').map(Number);const utc=Date.UTC(y,m-1,d,0,minute);let epoch=utc-60*60000;for(let i=0;i<3;i++)epoch=utc-offsetMin(epoch)*60000;return epoch}
+function fromISO(s){if(!s)return NaN;if(/^\d{4}-\d\d-\d\d$/.test(s))return zonedEpoch(s,0);if(/Z|[+-]\d\d:\d\d$/.test(s))return Date.parse(s);return zonedEpoch(s.slice(0,10),Number(s.slice(11,13))*60+Number(s.slice(14,16)))}
+function staleText(name){return name&&name.savedAt?' · zapis '+fmtTime.format(name.savedAt):''}
+function loadingError(key,msg){errors[key]=msg;showErrors()}
+function ok(key){delete errors[key];showErrors()}
+function showErrors(){const keys=Object.values(errors);setText('alerts',keys.length?'Brak aktualizacji: '+keys.join(' · '):'Dane aktualizowane co 5 minut')}
+function tick(){const now=Date.now();setText('clock',fmtTime.format(now));setText('date',fmtDate.format(now));renderEvents();renderDepartures();renderSun()}
+function scale(){const k=Math.min(innerWidth/1920,innerHeight/1080);const el=$('screen');el.style.transform='scale('+k+')';el.style.left=(innerWidth-1920*k)/2+'px';el.style.top=(innerHeight-1080*k)/2+'px'}
+function codeToWeather(code){code=Number(code);if(code===0)return['☀','Bezchmurnie'];if(code<=2)return['⛅','Małe zachmurzenie'];if(code===3)return['☁','Pochmurno'];if(code<=48)return['≋','Mgła'];if(code<=57)return['☂','Mżawka'];if(code<=67)return['☂','Deszcz'];if(code<=77)return['❄','Śnieg'];if(code<=82)return['☂','Przelotne opady'];if(code<=86)return['❄','Opady śniegu'];if(code>=95)return['⚡','Burza'];return['☁','Zmienne warunki']}
+function weatherRender(){const w=data.weather;if(!w||!w.current)return;const current=w.current;const [icon,desc]=codeToWeather(current.weather_code);setText('weather-icon',icon);setText('temperature',Math.round(current.temperature_2m)+'°');setText('weather-description',desc);setText('feels-like','Odczuwalna '+Math.round(current.apparent_temperature)+'° · wilgotność '+Math.round(current.relative_humidity_2m)+'%');setText('weather-source','Open-Meteo'+staleText(w));
+let html='';const localNow=dayKey(Date.now())+'T'+fmtTime.format(Date.now());const arr=w.hourly&&w.hourly.time||[];let future=[];for(let i=0;i<arr.length;i++)if(arr[i]>localNow)future.push(i);future=future.slice(0,5);future.forEach(i=>{const [sym]=codeToWeather(w.hourly.weather_code[i]);html+='<div class="slot"><span class="ficon">'+sym+'</span><span class="ftext">'+escapeHTML(arr[i].slice(11,16))+'<small>'+Math.round(w.hourly.temperature_2m[i])+'° · '+Math.round(w.hourly.precipitation_probability[i]||0)+'%</small></span></div>'});$('forecast').innerHTML=html||'<div class="muted">Brak prognozy godzinowej</div>'}
+function renderSun(){const s=data.sun;if(s&&s.daily&&s.daily.time){let k=dayKey(Date.now());let i=s.daily.time.indexOf(k);if(i<0)i=-1;const sunrise=i>=0&&s.daily.sunrise&&s.daily.sunrise[i],sunset=i>=0&&s.daily.sunset&&s.daily.sunset[i];if(sunrise&&sunset){setText('sunrise-line','Wschód '+sunrise.slice(11,16)+' · zachód '+sunset.slice(11,16));const now=Date.now();document.body.classList.toggle('night',now<fromISO(sunrise)||now>=fromISO(sunset));return}}
+const h=Number(warsawParts(Date.now()).hour);document.body.classList.toggle('night',h<7||h>=19);setText('sunrise-line','Wschód i zachód: brak aktualnych danych')}
+function renderAir(){const d=data.air;if(!d||!d.current)return;let a=d.current;const v=Number(a.european_aqi);setText('aqi-number',Number.isFinite(v)?Math.round(v):'—');setText('aqi-label',!Number.isFinite(v)?'Brak indeksu':v<=20?'Dobra':v<=60?'Średnia':'Zła');setText('pm25',Number.isFinite(a.pm2_5)?Number(a.pm2_5).toFixed(1):'—');setText('pm10',Number.isFinite(a.pm10)?Number(a.pm10).toFixed(1):'—');setText('air-source','Open-Meteo / CAMS'+staleText(d))}
+function renderEvents(){const root=$('events');let ev=data.calendar&&data.calendar.items||[];const now=Date.now(),today=dayKey(now),tomorrow=dayShift(today,1);ev=ev.filter(x=>{const end=x.end&& (x.end.dateTime||x.end.date);const start=x.start&&(x.start.dateTime||x.start.date);return start&&end&&fromISO(end)>now-60000&&(dayKey(fromISO(start))===today||dayKey(fromISO(start))===tomorrow||fromISO(start)<now)}).sort((a,b)=>fromISO(a.start.dateTime||a.start.date)-fromISO(b.start.dateTime||b.start.date)).slice(0,4);
+if(!data.calendar){root.innerHTML='<div class="empty">Kalendarz niepołączony.<br>Otwórz „Ustawienia”, aby połączyć Google.</div>';return}
+if(!ev.length){root.innerHTML='<div class="empty">Brak nadchodzących wydarzeń na dziś i jutro.</div>';return}
+root.innerHTML=ev.map((e,i)=>{const start=e.start.dateTime||e.start.date;const d=dayKey(fromISO(start));const when=e.start.date? 'Cały dzień':fmtTime.format(fromISO(start));const day=d===today?'Dziś':d===tomorrow?'Jutro':'Wydarzenie';return '<div class="entry'+(i===0?' primary':'')+'"><div class="event-when">'+escapeHTML(when)+'<span class="dayname">'+day+'</span></div><div class="event-title" title="'+escapeHTML(e.summary||'Bez tytułu')+'">'+escapeHTML(e.summary||'Bez tytułu')+'</div></div>'}).join('')}
+function activity(service,ymd,calendar,exceptions){const ex=exceptions&&exceptions[service+'|'+ymd.replace(/-/g,'')];if(ex===1)return true;if(ex===2)return false;const c=calendar&&calendar[service];if(!c)return false;const ds=ymd.replace(/-/g,'');if(ds<c.start||ds>c.end)return false;const w=new Date(ymd+'T12:00:00Z').getUTCDay();return Boolean(c.week[(w+6)%7])}
+function calcDepartures(){const t=data.timetable;if(!t||!Array.isArray(t.stops))return[];const now=Date.now(),today=dayKey(now);let res=[];const allowed=config.stop==='both'?['0637','0638']:[config.stop];for(let shift=-1;shift<=1;shift++){const date=dayShift(today,shift);for(const row of t.stops){if(!allowed.includes(row.platform))continue;const type=Number(row.routeType);if(config.kind==='bus'&&!(type===3||(type>=700&&type<800)))continue;if(config.kind==='tram'&&!(type===0||(type>=900&&type<1000)))continue;if(!activity(row.service,date,t.calendar,t.exceptions))continue;const sched=zonedEpoch(date,row.mins),live=data.live&&data.live[row.trip+'|'+row.stop],when=live&&Math.abs(live-sched)<120*60000?live:sched;if(when>=now-20000&&when<=now+6*3600000){res.push({line:row.route,headsign:row.headsign,platform:row.platform,when:when,scheduled:sched,realtime:when!==sched,trip:row.trip})}}}
+res.sort((a,b)=>a.when-b.when||a.line.localeCompare(b.line,'pl'));const seen=new Set();return res.filter(x=>{const key=x.trip+'|'+x.platform+'|'+x.scheduled;if(seen.has(key))return false;seen.add(key);return true}).slice(0,4)}
+function renderDepartures(){const root=$('departures'), t=data.timetable;const allowed=config.stop==='both'?'0637 / 0638':config.stop;setText('transport-source','Legionów – Zachodnia · '+allowed);if(!t){root.innerHTML='<div class="empty">Brak pobranego rozkładu.<br>Sprawdź ustawienia pośrednika.</div>';return}
+const deps=calcDepartures();if(!deps.length){root.innerHTML='<div class="empty">Brak zaplanowanych odjazdów w ciągu 6 godzin.</div>';return}
+root.innerHTML=deps.map((d,i)=>{const mins=Math.max(0,Math.ceil((d.when-Date.now())/60000));return '<div class="dep'+(i===0?' primary':'')+'"><div class="line-no">'+escapeHTML(d.line)+'</div><div><div class="direction" title="'+escapeHTML(d.headsign)+'">'+escapeHTML(d.headsign||'Kierunek nieznany')+'</div><div class="detail">Stanowisko '+escapeHTML(d.platform)+' · '+(d.realtime?'dane na żywo':'rozkład planowy')+' · '+fmtTime.format(d.when)+'</div></div><div class="eta">'+mins+' min<small>do odjazdu</small></div></div>'}).join('')}
+async function fetchJSON(url,timeout=15000,opts={}){const ctl=new AbortController(),id=setTimeout(()=>ctl.abort(),timeout);try{const r=await fetch(url,{...opts,signal:ctl.signal,cache:'no-store'});if(!r.ok)throw new Error('HTTP '+r.status);return await r.json()}finally{clearTimeout(id)}}
+async function fetchBytes(url,timeout=25000){const ctl=new AbortController(),id=setTimeout(()=>ctl.abort(),timeout);try{const r=await fetch(url,{signal:ctl.signal});if(!r.ok)throw new Error('HTTP '+r.status);return new Uint8Array(await r.arrayBuffer())}finally{clearTimeout(id)}}
+async function updateJSON(key,url,validate,render){try{const val=await fetchJSON(url);if(!validate(val))throw new Error('Niepełne dane');val.savedAt=Date.now();data[key]=val;write(key,val);ok(key==='sun'?'słońce':key==='weather'?'pogoda':'powietrze');render()}catch(e){loadingError(key==='sun'?'słońce':key==='weather'?'pogoda':'powietrze',key==='sun'?'słońce':key==='weather'?'pogoda':'powietrze');render()}}
+function csv(line){const out=[];let part='',quote=false;for(let i=0;i<line.length;i++){let c=line[i];if(c==='"'){if(quote&&line[i+1]==='"'){part+='"';i++}else quote=!quote}else if(c===','&&!quote){out.push(part);part=''}else part+=c}out.push(part.replace(/\r$/,''));return out}
+function parseSmall(bytes){const text=new TextDecoder().decode(bytes||new Uint8Array(0)).replace(/^\uFEFF/,'');const lines=text.split(/\r?\n/).filter(Boolean);if(!lines.length)return[];const keys=csv(lines[0]);return lines.slice(1).map(s=>{const a=csv(s),o={};keys.forEach((k,i)=>{o[k]=a[i]||''});return o})}
+function scheduleParser(zipped){return new Promise((resolve,reject)=>{if(typeof fflate==='undefined'){reject(new Error('Brak biblioteki ZIP'));return}const selected=new Set(['stops.txt','stop_times.txt','routes.txt','trips.txt','calendar.txt','calendar_dates.txt']);fflate.unzip(zipped,{filter:x=>selected.has(x.name.toLowerCase().split('/').pop())},async (err,files)=>{if(err){reject(err);return}try{const file=(name)=>files[Object.keys(files).find(k=>k.toLowerCase().endsWith('/'+name)||k.toLowerCase()===name)];for(const required of ['stops.txt','stop_times.txt','routes.txt','trips.txt'])if(!file(required))throw new Error('Brakuje pliku '+required);
+const stopRows=parseSmall(file('stops.txt'));let candidates=new Set();const platforms={};for(const s of stopRows){const label=(s.stop_name||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase();const plat=(String(s.stop_code||s.stop_id||'').match(/0*637(?:\D|$)/)?'0637':String(s.stop_code||s.stop_id||'').match(/0*638(?:\D|$)/)?'0638':'');if(plat&&(label.includes('LEGION')&&label.includes('ZACHOD')||/^0?63[78]$/.test(s.stop_id))){candidates.add(s.stop_id);platforms[s.stop_id]=plat}}
+// Jeśli plik nie zawiera kodu przystankowego, sprawdzamy też numery stop_id bez zera.
+for(const raw of ['0637','0638','637','638']){candidates.add(raw);platforms[raw]=raw.endsWith('7')?'0637':'0638'}
+const arrival=[];const bytes=file('stop_times.txt');const decoder=new TextDecoder('utf-8');let tail='',header=null,idx={};let cycles=0;
+const handle=line=>{if(!header){header=csv(line.replace(/^\uFEFF/,''));header.forEach((k,i)=>{idx[k]=i});return}let match=false;for(const s of candidates){if(line.includes(','+s+',')||line.endsWith(','+s)){match=true;break}}if(!match)return;const v=csv(line);const stop=v[idx.stop_id];if(!candidates.has(stop))return;const depart=v[idx.departure_time]||v[idx.arrival_time];const trip=v[idx.trip_id];const m=depart&&depart.match(/^(\d+):(\d{2}):\d{2}$/);if(trip&&m)arrival.push({trip:trip,stop:stop,platform:platforms[stop]||'0637',mins:Number(m[1])*60+Number(m[2])})};
+for(let start=0;start<bytes.length;start+=1048576){const chunk=tail+decoder.decode(bytes.subarray(start,start+1048576),{stream:start+1048576<bytes.length});const end=chunk.lastIndexOf('\n');if(end>=0){const lines=chunk.slice(0,end).split('\n');for(const line of lines)handle(line.replace(/\r$/,''));tail=chunk.slice(end+1)}else tail=chunk;cycles++;if(cycles%4===0)await new Promise(r=>setTimeout(r,0))}
+if(tail)handle(tail);if(!arrival.length)throw new Error('Nie znaleziono kursów dla 0637 / 0638');const tripsNeeded=new Set(arrival.map(x=>x.trip)),trips={};for(const t of parseSmall(file('trips.txt')))if(tripsNeeded.has(t.trip_id))trips[t.trip_id]=t;
+const routes={},routeTypes={};for(const r of parseSmall(file('routes.txt'))){routes[r.route_id]=r.route_short_name||r.route_long_name||'?';routeTypes[r.route_id]=Number(r.route_type)}const calendar={};for(const c of parseSmall(file('calendar.txt')))calendar[c.service_id]={start:c.start_date,end:c.end_date,week:[c.monday,c.tuesday,c.wednesday,c.thursday,c.friday,c.saturday,c.sunday].map(Number)};
+const exceptions={};for(const e of parseSmall(file('calendar_dates.txt')))exceptions[e.service_id+'|'+e.date]=Number(e.exception_type);
+const stops=arrival.filter(a=>trips[a.trip]).map(a=>{const trip=trips[a.trip];return {...a,route:routes[trip.route_id]||'?',routeType:routeTypes[trip.route_id],headsign:trip.trip_headsign||'Kierunek nieznany',service:trip.service_id}});
+resolve({stops,calendar,exceptions,savedAt:Date.now()})}catch(e){reject(e)}})})}
+function loadZipLib(){if(typeof fflate!=='undefined')return Promise.resolve();return new Promise((res,rej)=>{const script=document.createElement('script');script.src='https://cdn.jsdelivr.net/npm/fflate@0.8.2/umd/index.js';script.onload=res;script.onerror=()=>rej(new Error('Nie można pobrać biblioteki ZIP'));document.head.appendChild(script)})}
+function transitUrl(name){return config.proxy?config.proxy.replace(/\/+$/,'')+'/'+name:(name==='gtfs'?CITY_GTFS:CITY_REALTIME)}
+async function refreshSchedule(force=false){if(transportBusy)return;const saved=data.timetable;if(!force&&saved&&Date.now()-saved.savedAt<24*3600000)return;transportBusy=true;try{await loadZipLib();const blob=await fetchBytes(transitUrl('gtfs'),40000);const next=await scheduleParser(blob);data.timetable=next;if(!write('timetable',next))throw new Error('Brak miejsca w pamięci podręcznej');renderDepartures();ok('rozkład')}catch(e){console.warn('GTFS:',e);loadingError('rozkład','rozkład');renderDepartures()}finally{transportBusy=false}}
+function walkProto(buffer,fn){let pos=0;function varint(){let x=0,mul=1;for(let j=0;j<10&&pos<buffer.length;j++){const b=buffer[pos++];x+=(b&127)*mul;if(!(b&128))return x;mul*=128}throw Error('Błędny protobuf')}while(pos<buffer.length){const tag=varint(),field=tag>>3,wire=tag&7;if(wire===0)fn(field,wire,varint());else if(wire===2){const len=varint();if(pos+len>buffer.length)throw Error('Błędna długość protobuf');fn(field,wire,buffer.subarray(pos,pos+len));pos+=len}else if(wire===1)pos+=8;else if(wire===5)pos+=4;else throw Error('Nieobsługiwane pole protobuf')}}
+function asText(b){return new TextDecoder().decode(b)}
+function tripRealtime(bytes){const output={};const indexByTrip=new Map();if(data.timetable)for(const row of data.timetable.stops){if(!indexByTrip.has(row.trip))indexByTrip.set(row.trip,new Set());indexByTrip.get(row.trip).add(row.stop)}
+walkProto(bytes,(field,wire,entity)=>{if(field!==2||wire!==2)return;walkProto(entity,(f,w,tu)=>{if(f!==3||w!==2)return;let trip='', updates=[];walkProto(tu,(sf,sw,sval)=>{if(sf===1&&sw===2)walkProto(sval,(tf,tw,tv)=>{if(tf===1&&tw===2)trip=asText(tv)});if(sf===2&&sw===2){let stop='',time=null;walkProto(sval,(uf,uw,uv)=>{if(uf===4&&uw===2)stop=asText(uv);if((uf===2||uf===3)&&uw===2)walkProto(uv,(ef,ew,ev)=>{if(ef===2&&ew===0)time=ev*1000})});if(stop&&time)updates.push([stop,time])}});if(trip&&indexByTrip.has(trip))for(const [stop,time]of updates)if(indexByTrip.get(trip).has(stop))output[trip+'|'+stop]=time})});return output}
+async function refreshRealtime(){if(!data.timetable)return;try{const bytes=await fetchBytes(transitUrl('updates'),18000);data.live=tripRealtime(bytes);ok('odjazdy na żywo');renderDepartures()}catch(e){console.warn('GTFS-RT:',e);loadingError('odjazdy na żywo','odjazdy na żywo');renderDepartures()}}
+function buildGoogleClient(){if(!config.google||!window.google||!google.accounts||!google.accounts.oauth2)return false;tokenClient=google.accounts.oauth2.initTokenClient({client_id:config.google,scope:'https://www.googleapis.com/auth/calendar.readonly',callback:resp=>{if(resp.error){loadingError('kalendarz','kalendarz');setText('settings-note','Nie udało się zalogować: '+resp.error);return}accessToken=resp.access_token;tokenExpires=Date.now()+Math.max(0,(resp.expires_in||3500)-90)*1000;ok('kalendarz');refreshCalendar();setText('settings-note','Połączono z kontem Google. Możesz zamknąć ustawienia. Zapisane wydarzenia zostają tylko w tej przeglądarce.')},error_callback:e=>{loadingError('kalendarz','kalendarz');setText('settings-note','Google nie umożliwiło logowania w tej przeglądarce: '+(e.type||'błąd'))}});return true}
+function connectCalendar(){if(!config.google){setText('settings-note','Najpierw wklej identyfikator klienta OAuth, potem kliknij „Zapisz i odśwież”.');return}if(!buildGoogleClient()){setText('settings-note','Mechanizm Google nie załadował się. Sprawdź internet i ponów próbę.');return}tokenClient.requestAccessToken({prompt:'consent'})}
+async function refreshCalendar(){if(!config.google){loadingError('kalendarz','kalendarz');return}if(!accessToken||Date.now()>tokenExpires){loadingError('kalendarz','kalendarz');return}try{const today=dayKey(Date.now());const end=dayShift(today,2);const url='https://www.googleapis.com/calendar/v3/calendars/primary/events?singleEvents=true&orderBy=startTime&maxResults=100&timeMin='+encodeURIComponent(new Date(zonedEpoch(today,0)).toISOString())+'&timeMax='+encodeURIComponent(new Date(zonedEpoch(end,0)).toISOString());const json=await fetchJSON(url,16000,{headers:{Authorization:'Bearer '+accessToken}});if(!Array.isArray(json.items))throw Error('Brak listy wydarzeń');data.calendar={items:json.items.filter(e=>e.status!=='cancelled').map(e=>({summary:e.summary||'Bez tytułu',start:e.start,end:e.end})),savedAt:Date.now()};write('calendar',data.calendar);setText('calendar-source','Google Calendar'+staleText(data.calendar));ok('kalendarz');renderEvents()}catch(e){console.warn('Calendar:',e);loadingError('kalendarz','kalendarz');renderEvents()}}
+function initCache(){for(const k of ['weather','sun','air','calendar','timetable'])data[k]=read(k)||null;if(data.weather)weatherRender();if(data.air)renderAir();if(data.calendar)setText('calendar-source','Google Calendar'+staleText(data.calendar));renderSun();renderEvents();renderDepartures();if(!data.calendar)loadingError('kalendarz','kalendarz')}
+async function refreshAll(){updateJSON('weather',WEATHER,d=>d&&d.current&&d.hourly,weatherRender);updateJSON('sun',SUN,d=>d&&d.daily&&d.daily.sunrise&&d.daily.sunset,renderSun);updateJSON('air',AIR,d=>d&&d.current&&Number.isFinite(d.current.european_aqi),renderAir);refreshCalendar();refreshSchedule().then(refreshRealtime)}
+function settingsOpen(){ $('stop-choice').value=config.stop||'both';$('kind-choice').value=config.kind||'all';$('proxy-input').value=config.proxy||'';$('google-input').value=config.google||'';setText('settings-note','');$('settings').classList.add('open');$('settings').setAttribute('aria-hidden','false')}
+function settingsClose(){$('settings').classList.remove('open');$('settings').setAttribute('aria-hidden','true')}
+function saveConfig(){const proxy=$('proxy-input').value.trim().replace(/\/+$/,'');if(proxy&&!/^https:\/\/[^/]+$/i.test(proxy)){setText('settings-note','Pośrednik musi mieć adres HTTPS bez dodatkowej ścieżki.');return}const previousProxy=config.proxy||'';config={stop:$('stop-choice').value,kind:$('kind-choice').value,proxy:proxy,google:$('google-input').value.trim()};write('config',config);settingsClose();renderDepartures();accessToken='';tokenExpires=0;tokenClient=null;refreshCalendar();refreshSchedule(previousProxy!==proxy).then(refreshRealtime)}
+$('settings-button').addEventListener('click',settingsOpen);$('close-settings').addEventListener('click',settingsClose);$('save-settings').addEventListener('click',saveConfig);$('connect-google').addEventListener('click',connectCalendar);document.addEventListener('keydown',e=>{if(e.key==='Escape')settingsClose();if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey&&!/input|select/i.test(document.activeElement.tagName))settingsOpen()});addEventListener('resize',scale);scale();initCache();tick();refreshAll();setInterval(refreshAll,300000);setTimeout(()=>{tick();setInterval(tick,60000)},60000-Date.now()%60000);
+})();
+</script>
+</body>
+</html>
