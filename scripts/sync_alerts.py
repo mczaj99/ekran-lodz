@@ -9,7 +9,7 @@ from urllib.parse import urljoin
 import requests
 from bs4 import BeautifulSoup
 
-SOURCE = "https://www.mpk.lodz.pl/showtrafficproblemslist.action?category=1211"
+SOURCE = "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
 OUTPUT = Path(os.environ.get("ALERT_OUTPUT", "mpk-alerts.json"))
 LINES_PATTERN = re.compile(r"\b(?:[A-Z]{0,2}\d{1,3}[A-Z]?)\b", re.I)
 RESOLVED = re.compile(
