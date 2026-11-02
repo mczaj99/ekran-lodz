@@ -60,11 +60,11 @@
   .rain-hour-label{font-size:17px;white-space:nowrap;font-weight:700;line-height:21px;font-variant-numeric:tabular-nums}
   .rain-amount{font-size:16px;white-space:nowrap;line-height:19px;font-variant-numeric:tabular-nums;color:var(--muted)}
   .rain-note{font-size:16px;line-height:1.1;color:var(--muted);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .departure-card{padding:24px 28px 20px}
-  .departure-card .card-head{margin-bottom:16px}
+  .departure-card{padding:16px 28px 14px}
+  .departure-card .card-head{margin-bottom:10px}
   .departure-card h2{font-size:32px}
-  #departures{display:flex;flex-direction:column;gap:8px;min-height:0}
-  .dep{height:69px;display:grid;grid-template-columns:96px minmax(0,1fr) 160px;gap:18px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:0 18px}
+  #departures{display:flex;flex-direction:column;gap:5px;min-height:0}
+  .dep{height:61px;display:grid;grid-template-columns:96px minmax(0,1fr) 160px;gap:18px;align-items:center;background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:0 18px}
   .line-no{font-size:36px;line-height:1;font-weight:800;font-variant-numeric:tabular-nums}
   .direction{font-size:28px;font-weight:650;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
   .detail{font-size:17px;line-height:1.15;margin-top:3px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -265,7 +265,7 @@ function calcDepartures(){
     const key=x.trip+'|'+x.platform+'|'+x.scheduled;
     if(seen.has(key))return false;
     seen.add(key);return true;
-  }).slice(0,4);
+  }).slice(0,5);
 }
 function renderDepartures(){
   const root=$('departures'),t=data.timetable;
