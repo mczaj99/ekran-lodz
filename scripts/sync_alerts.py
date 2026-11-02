@@ -31,7 +31,7 @@ def fetch_alerts():
     # spacja HTML), a w dni bez komunikatów tabela w ogóle nie występuje.
     # Normalizujemy białe znaki zamiast porównywać surowy HTML.
     def normal(text):
-        return re.sub(r"\\s+", " ", text.replace("\\xa0", " ")).strip().casefold()
+        return re.sub(r"\s+", " ", text.replace("\xa0", " ")).strip().casefold()
 
     page_text = normal(soup.get_text(" ", strip=True))
     tables = [
