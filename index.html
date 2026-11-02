@@ -128,7 +128,7 @@
     </article>
   </section>
   <section class="card departure-card" aria-label="Wspólna lista odjazdów z Legionów – Zachodnia 0637 i Zachodnia – Legionów 1401">
-    <div class="departure-left"><div class="card-head"><h2>Najbliższe odjazdy</h2><span class="source" id="transport-source">0637 / 1401 · MPK Łódź</span></div>
+    <div class="departure-left"><div class="card-head"><h2>Najbliższe tramwaje</h2><span class="source" id="transport-source">0637 / 1401 · MPK Łódź</span></div>
     <div id="departures"><div class="empty">Ładowanie rozkładu…</div></div></div>
     <aside class="trouble-panel" aria-label="Utrudnienia tramwajów ze stanowisk 0637 i 1401"><div class="card-head"><h2>Utrudnienia MPK</h2><span class="source" id="trouble-source">MPK Łódź</span></div><div id="trouble-list" class="trouble-empty">Sprawdzanie komunikatów…</div></aside>
   </section>
@@ -140,8 +140,7 @@
     <p>Wszystkie ustawienia zapisują się tylko w tej przeglądarce. Nie zmieniamy konfiguracji Workera MPK. Dane pogodowe i opady pobieramy z Open-Meteo.</p>
     <label for="stop-choice">Stanowisko przystanku</label>
     <select id="stop-choice"><option value="both">Wspólnie: 0637 Legionów – Zachodnia i 1401 Zachodnia – Legionów</option><option value="0637">Tylko 0637 · Legionów – Zachodnia</option><option value="1401">Tylko 1401 · Zachodnia – Legionów</option></select>
-    <label for="kind-choice">Rodzaj pojazdów</label>
-    <select id="kind-choice"><option value="all">Autobusy i tramwaje</option><option value="bus">Tylko autobusy</option><option value="tram">Tylko tramwaje</option></select>
+    <p class="tiny">Rodzaj pojazdów: <strong>tylko tramwaje</strong>.</p>
     <label for="proxy-input">Adres pośrednika MPK (Cloudflare Worker)</label>
     <input id="proxy-input" spellcheck="false" placeholder="https://twoja-nazwa.workers.dev">
     <p class="tiny">Kalendarz nie jest używany. Na ekranie pozostają zegar, pogoda, 12-godzinne opady, powietrze i odjazdy MPK.</p>
@@ -160,7 +159,7 @@ const DEFAULT_TRANSPORT_PROXY='https://mpk-lodz.czajkowski-media.workers.dev';
 const $=id=>document.getElementById(id);
 const errors={}; const data={}; let transportBusy=false;
 const previousConfig=read('config')||{};
-let config={stop:'both',kind:previousConfig.kind||'all',proxy:previousConfig.proxy||DEFAULT_TRANSPORT_PROXY};
+let config={stop:'both',kind:'tram',proxy:previousConfig.proxy||DEFAULT_TRANSPORT_PROXY};
 // Aktualizacja starszych ustawień: pusty adres nie przywraca blokowanego pobierania z miasta.
 if(!config.proxy)config.proxy=DEFAULT_TRANSPORT_PROXY;
 const fmtTime=new Intl.DateTimeFormat('pl-PL',{timeZone:TZ,hour:'2-digit',minute:'2-digit',hourCycle:'h23'});
@@ -253,10 +252,8 @@ function calcDepartures(){
     for(const row of t.stops){
       if(!allowed.includes(row.platform))continue;
       const type=Number(row.routeType);
-      const bus=type===3||(type>=700&&type<800);
       const tram=type===0||(type>=900&&type<1000);
-      if(config.kind==='bus'&&!bus)continue;
-      if(config.kind==='tram'&&!tram)continue;
+      if(!tram)continue;
       if(!activity(row.service,date,t.calendar,t.exceptions))continue;
       const sched=zonedEpoch(date,row.mins);
       const live=data.live&&data.live[row.trip+'|'+row.stop];
@@ -463,9 +460,9 @@ walkProto(bytes,(field,wire,entity)=>{if(field!==2||wire!==2)return;walkProto(en
 async function refreshRealtime(){if(!data.timetable)return;try{const bytes=await fetchBytes(transitUrl('updates'),18000);data.live=tripRealtime(bytes);ok('odjazdy na żywo');renderDepartures()}catch(e){console.warn('GTFS-RT (adres: '+transitUrl('updates')+'):',e);loadingError('odjazdy na żywo','odjazdy na żywo: '+(e&&e.message||'błąd odczytu'));renderDepartures()}}
 function initCache(){for(const k of ['weather','sun','air','timetable'])data[k]=read(k)||null;try{localStorage.removeItem('lodzTv_calendar')}catch(_){/* Pamięć może być wyłączona */}weatherRender();if(data.air)renderAir();renderSun();renderDepartures();data.troubles=read('troubles')||null;renderTroubles()}
 async function refreshAll(){updateJSON('weather',WEATHER,d=>d&&d.current&&d.hourly&&Array.isArray(d.hourly.precipitation_probability)&&Array.isArray(d.hourly.precipitation),weatherRender);updateJSON('sun',SUN,d=>d&&d.daily&&d.daily.sunrise&&d.daily.sunset,renderSun);updateJSON('air',AIR,d=>d&&d.current&&Number.isFinite(d.current.european_aqi),renderAir);refreshSchedule().then(refreshRealtime);refreshTroubles()}
-function settingsOpen(){ $('stop-choice').value=config.stop||'both';$('kind-choice').value=config.kind||'all';$('proxy-input').value=config.proxy||DEFAULT_TRANSPORT_PROXY;setText('settings-note','');$('settings').classList.add('open');$('settings').setAttribute('aria-hidden','false')}
+function settingsOpen(){ $('stop-choice').value=config.stop||'both';$('proxy-input').value=config.proxy||DEFAULT_TRANSPORT_PROXY;setText('settings-note','');$('settings').classList.add('open');$('settings').setAttribute('aria-hidden','false')}
 function settingsClose(){$('settings').classList.remove('open');$('settings').setAttribute('aria-hidden','true')}
-function saveConfig(){const proxy=($('proxy-input').value.trim()||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'');if(proxy&&!/^https:\/\/[^/]+$/i.test(proxy)){setText('settings-note','Pośrednik musi mieć adres HTTPS bez dodatkowej ścieżki.');return}const previousProxy=config.proxy||'';config={stop:$('stop-choice').value,kind:$('kind-choice').value,proxy:proxy};write('config',config);settingsClose();renderDepartures();refreshSchedule(previousProxy!==proxy).then(refreshRealtime)}
+function saveConfig(){const proxy=($('proxy-input').value.trim()||DEFAULT_TRANSPORT_PROXY).replace(/\/+$/,'');if(proxy&&!/^https:\/\/[^/]+$/i.test(proxy)){setText('settings-note','Pośrednik musi mieć adres HTTPS bez dodatkowej ścieżki.');return}const previousProxy=config.proxy||'';config={stop:$('stop-choice').value,kind:'tram',proxy:proxy};write('config',config);settingsClose();renderDepartures();refreshSchedule(previousProxy!==proxy).then(refreshRealtime)}
 $('settings-button').addEventListener('click',settingsOpen);$('close-settings').addEventListener('click',settingsClose);$('save-settings').addEventListener('click',saveConfig);document.addEventListener('keydown',e=>{if(e.key==='Escape')settingsClose();if(e.key.toLowerCase()==='s'&&!e.ctrlKey&&!e.metaKey&&!/input|select/i.test(document.activeElement.tagName))settingsOpen()});addEventListener('resize',scale);scale();initCache();tick();refreshAll();setInterval(refreshAll,300000);setTimeout(()=>{tick();setInterval(tick,60000)},60000-Date.now()%60000);
 })();
 </script>
