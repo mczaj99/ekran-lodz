@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-03T09:21:24+00:00",
+  "updatedAt": "2026-11-03T10:16:12+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,16 +9,6 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
-    {
-      "lines": [
-        "57",
-        "70",
-        "81"
-      ],
-      "message": "Zatrzymanie ruchu autobusów na ul. Zagajnikowa przy ul. Niemojewskiego w kierunku do ul. Inflanckiej działania służb ratunkowych",
-      "update": "Autobusy kierowane objazdem. autobusy linii 57, 70, 81 od skrzyżowania ul. Zagajnikowa / Okopowa skierowane ul. Okopową, Marysińską (linia 70 na swoją trasę) ul. Inflancką na swoje",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
