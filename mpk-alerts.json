@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-03T22:06:00+00:00",
+  "updatedAt": "2026-11-03T22:47:30+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,6 +9,14 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "N6"
+      ],
+      "message": "Z powodu prac drogowych na skrzyżowaniu Mickiewicza/Piotrkowska autobusy skierowane objazdem.",
+      "update": "Linia N6 skierowana objazdem: Kościuszki,  Żwirki,  Piotrkowska (objazd w dwóch kierunkach jazdy). Z powodu objazdu nastąpiła zmiana lokalizacji przystanku z Piotrkowska/Żwirki na ",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
