@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T11:39:57+00:00",
+  "updatedAt": "2026-11-04T12:27:14+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,17 +9,6 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
-    {
-      "lines": [
-        "7",
-        "15",
-        "17",
-        "45"
-      ],
-      "message": "Zatrzymanie ruchu tramwajów na ul. Legionów  w kierunku do ul. Zachodniej. samochód przy torowisku.",
-      "update": "Przewidywany czas zatrzymania - 15 min. Przepraszamy za utrudnienia.",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
