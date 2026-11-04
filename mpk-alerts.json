@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-04T21:37:16+00:00",
+  "updatedAt": "2026-11-04T22:26:06+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,18 +9,6 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
-    {
-      "lines": [
-        "8",
-        "12",
-        "13",
-        "14",
-        "10A"
-      ],
-      "message": "Zatrzymanie ruchu tramwajów na al.Mickiewicza przy ul. Łąkowej w kierunku do al.Włókniarzy. Przyczyna techniczna.",
-      "update": "Przewidywany czas zatrzymania - 15 min. Przepraszamy za utrudnienia.",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     },
     {
