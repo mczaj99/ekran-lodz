@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T09:36:23+00:00",
+  "updatedAt": "2026-11-07T10:21:41+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -13,14 +13,24 @@
     },
     {
       "lines": [
+        "80",
+        "86",
+        "99",
+        "97A"
+      ],
+      "message": "Z powodu organizowanej imprezy w Atlas Arenie autobusy linii 80,86,97AB,99 nie zatrzymują się na przystanku Bandurskiego/Dw. Łódź Kaliska (1599).",
+      "update": "Autobusy kierowane objazdem. Linia 97 A/B do Bandurskiego-Maratońska bez zmian a następnie Bandurskiego (zawraca przy rondzie Małaszewskiej), południowym wjazdem do ul. Maratońskie",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
         "2",
         "5",
         "8",
-        "13",
-        "16"
+        "13"
       ],
       "message": "Zatrzymanie ruchu tramwajów na ul. Aleksandrowska przy ul. Traktorowej w kierunku do ul. Kaczeńcowej - przyczyna techniczna",
-      "update": "Przewidywany czas zatrzymania - 20 min. Tramwaje jadą opóźnione.",
+      "update": "Tramwaje  kierowane objazdem. Tramwaje skrócone do pętli Dw. Żabieniec. Na odcinku pozbawionym komunikacji tramwajowej uruchomiono autobusową komunikację zastępczą od ul. Aleksandr",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
