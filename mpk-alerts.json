@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-07T11:03:35+00:00",
+  "updatedAt": "2026-11-07T11:39:58+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,17 +9,6 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
-    {
-      "lines": [
-        "2",
-        "6",
-        "8",
-        "13"
-      ],
-      "message": "Zatrzymanie ruchu tramwajów na ul. Aleksandrowska przy ul. Traktorowej w kierunku do ul. Kaczeńcowej - przyczyna techniczna",
-      "update": "Tramwaje  kierowane objazdem. Tramwaje skrócone do pętli Dw. Żabieniec. Na odcinku pozbawionym komunikacji tramwajowej uruchomiono autobusową komunikację zastępczą od ul. Aleksandr",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
