@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T11:02:11+00:00",
+  "updatedAt": "2026-11-09T11:56:46+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,16 +9,6 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
-    {
-      "lines": [
-        "12",
-        "18",
-        "19"
-      ],
-      "message": "Zatrzymanie ruchu tramwajów na ul. Pomorskiej przystanek CKD w kierunku do ul. Konstytucyjnej - przyczyna techniczna.",
-      "update": "Przewidywany czas zatrzymania - 15 min. Przepraszamy za utrudnienia.",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
