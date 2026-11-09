@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-09T14:12:37+00:00",
+  "updatedAt": "2026-11-09T15:06:46+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,6 +9,17 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "10",
+        "12",
+        "14",
+        "18"
+      ],
+      "message": "Zatrzymanie ruchu tramwajów na al. Bandurskiego przy Dworcu Łódź Kaliska w dwóch kierunkach. Przyczyna techniczna.",
+      "update": "Tramwaje  kierowane objazdem. Tramwaje linii 10, 12, 14, 18 jadące w kierunku pętli Ratknia od skrzyżowania al. Mickiewicza - al. Włókniarzy zostały skierowane przez Włókniarzy, Li",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
