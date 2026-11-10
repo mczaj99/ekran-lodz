@@ -1,19 +1,8 @@
 {
-  "updatedAt": "2026-11-10T16:47:30+00:00",
+  "updatedAt": "2026-11-10T17:33:32+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
-    {
-      "lines": [
-        "3",
-        "9",
-        "10A",
-        "10B"
-      ],
-      "message": "Zatrzymanie ruchu tramwajów na ul. Rokocińskiej przy ul. Lermontowej kierunkach do ul. Puszkina Awaria techniczna",
-      "update": "Przewidywany czas zatrzymania - 15 min. Przepraszamy za utrudnienia.",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
     {
       "lines": [
         "77"
