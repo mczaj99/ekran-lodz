@@ -1,8 +1,16 @@
 {
-  "updatedAt": "2026-11-10T20:11:45+00:00",
+  "updatedAt": "2026-11-10T20:55:15+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
+    {
+      "lines": [
+        "1"
+      ],
+      "message": "Zatrzymanie ruchu tramwajów na ul. Kilińskiego przy ul. Mochnackiego w kierunku do ul. Dąbrowskiego Przyczyna techniczna",
+      "update": "Tramwaje  kierowane objazdem. Od skrzyżowania Kilińskiego/ Dąbrowskiego przez Dąbrowskiego, Rzgowską na pl. Niepodległości. Przepraszamy za utrudnienia.",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
     {
       "lines": [
         "77"
