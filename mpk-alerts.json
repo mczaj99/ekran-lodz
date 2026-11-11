@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-11T06:33:45+00:00",
+  "updatedAt": "2026-11-11T07:51:18+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,6 +9,18 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "2",
+        "3",
+        "6",
+        "7",
+        "11"
+      ],
+      "message": "W związku z uroczystymi obchodami Narodowego Święta Niepodległości na Placu Katedralnym na podstawie decyzji Zarządu Dróg i Transportu w dniu 11 listopada (środa) 2026 roku w godz. ok. 08:40 – 13:00, w trybie awaryjnym (bez zmiany rozkładów jazdy), zmianie ulegną trasy linii: 2, 3, 6, 7, 11. Dodatkowo uruchomiona zostanie autobusowa linia",
+      "update": "Szczegóły w linku",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
