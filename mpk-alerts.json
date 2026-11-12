@@ -1,16 +1,8 @@
 {
-  "updatedAt": "2026-11-12T10:41:12+00:00",
+  "updatedAt": "2026-11-12T11:37:25+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
-    {
-      "lines": [
-        "57"
-      ],
-      "message": "Zatrzymanie ruchu autobusów na ul. Paderewskiego przy ul. Karpackiej w kierunku do Ronda Lotników Lwowskich - prace drogowe.",
-      "update": "Autobusy kierowane objazdem. Linia 57 od pętli Piastów Kurak wydłużona przez Paderewskiego, Rzgowską do pętli Dw. Łódź Chojny, gdzie zawracają i wracają przez Rzgowską, Paderewskie",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
     {
       "lines": [
         "77"
