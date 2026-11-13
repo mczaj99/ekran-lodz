@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-13T05:32:30+00:00",
+  "updatedAt": "2026-11-13T06:32:38+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,6 +9,14 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "43"
+      ],
+      "message": "Zatrzymanie ruchu tramwajów w Konstantynowie na ul. Łódzkiej przed ul. Dąbrowską. Zdarzenie drogowe.",
+      "update": "Tramwaje jadą opóźnione - kursują od pl. Wolności w Konstantynowie do Łódzka  - Dąbrowska oraz od Legionów Włókniarzy do Łódzka -  Dąbrowska. Dodatkowo uruchomiono autobusową komun",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
