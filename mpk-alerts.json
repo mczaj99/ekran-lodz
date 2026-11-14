@@ -1,8 +1,16 @@
 {
-  "updatedAt": "2026-11-14T03:07:42+00:00",
+  "updatedAt": "2026-11-14T03:55:33+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
+    {
+      "lines": [
+        "88"
+      ],
+      "message": "Z powodu prac drogowych w ulicy Kopanka za ulica Marmurową  w kierunku do ulicy  Aksamitnej autobusy skierowane objazdem .",
+      "update": "Szczegóły w linku",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
     {
       "lines": [
         "77"
