@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-17T12:23:50+00:00",
+  "updatedAt": "2026-11-17T13:41:56+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -17,6 +17,18 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "2",
+        "8",
+        "13",
+        "16",
+        "76"
+      ],
+      "message": "Zatrzymanie ruchu tramwajowego i autobusowego na ul. Aleksandrowska przy ul. Kaczeńcowej w kierunku do ul. Szczecińskiej i Rojnej al.",
+      "update": "Tramwaje i autobusy wróciły na właściwe trasy. Tramwaje jadą opóźnione. Przepraszamy za utrudnienia.",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
