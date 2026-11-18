@@ -1,8 +1,19 @@
 {
-  "updatedAt": "2026-11-18T17:36:40+00:00",
+  "updatedAt": "2026-11-18T18:27:08+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
+    {
+      "lines": [
+        "57",
+        "61",
+        "77",
+        "N8"
+      ],
+      "message": "W związku z pracami remontowymi na północnej jezdni al. Rodziny Poznańskich od ok. godz. 19:00 dnia 18 listopada do ok. godz. 12:00 dnia 20 listopada 2026 r. zmianie ulegną trasy autobusów.",
+      "update": "Szczegóły w linku",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
     {
       "lines": [
         "88"
