@@ -1,16 +1,14 @@
 {
-  "updatedAt": "2026-11-20T05:30:09+00:00",
+  "updatedAt": "2026-11-20T06:32:34+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
     {
       "lines": [
-        "57",
-        "61",
-        "77",
-        "N8"
+        "87A",
+        "87B"
       ],
-      "message": "W związku z pracami remontowymi na północnej jezdni al. Rodziny Poznańskich od ok. godz. 19:00 dnia 18 listopada do ok. godz. 12:00 dnia 20 listopada 2026 r. zmianie ulegną trasy autobusów.",
+      "message": "W związku z układaniem warstwy ścieralnej na ul. Wielkopolskiej na podstawie decyzji Zarządu Dróg i Transportu w dniach 20 – 21 (pt – sb) listopada 2026 roku, zmianie w trybie awaryjnym (bez zmian rozkładów jazdy) ulegnie trasa linii 87A/B.",
       "update": "Szczegóły w linku",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     },
