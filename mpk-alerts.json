@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-20T06:32:34+00:00",
+  "updatedAt": "2026-11-20T07:50:58+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -26,6 +26,18 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "1",
+        "4",
+        "5",
+        "9",
+        "19"
+      ],
+      "message": "Zatrzymanie ruchu tramwajów na ul. Kilińskiego przy ul. Narutowicza w kierunku do ul. POW - przyczyna techniczna.",
+      "update": "Przewidywany czas zatrzymania - 20 min. Przepraszamy za utrudnienia.",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
