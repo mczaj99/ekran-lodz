@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-21T08:29:20+00:00",
+  "updatedAt": "2026-11-21T09:17:03+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,14 +9,6 @@
         "87B"
       ],
       "message": "W związku z układaniem warstwy ścieralnej na ul. Wielkopolskiej na podstawie decyzji Zarządu Dróg i Transportu w dniach 20 – 21 (pt – sb) listopada 2026 roku, zmianie w trybie awaryjnym (bez zmian rozkładów jazdy) ulegnie trasa linii 87A/B.",
-      "update": "Szczegóły w linku",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
-    {
-      "lines": [
-        "88"
-      ],
-      "message": "Z powodu prac drogowych w ulicy Kopanka za ulica Marmurową  w kierunku do ulicy  Aksamitnej autobusy skierowane objazdem .",
       "update": "Szczegóły w linku",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     },
