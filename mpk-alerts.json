@@ -1,17 +1,8 @@
 {
-  "updatedAt": "2026-11-22T06:15:52+00:00",
+  "updatedAt": "2026-11-22T07:32:07+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
-    {
-      "lines": [
-        "87A",
-        "87B"
-      ],
-      "message": "W związku z układaniem warstwy ścieralnej na ul. Wielkopolskiej na podstawie decyzji Zarządu Dróg i Transportu w dniach 20 – 21 (pt – sb) listopada 2026 roku, zmianie w trybie awaryjnym (bez zmian rozkładów jazdy) ulegnie trasa linii 87A/B.",
-      "update": "Szczegóły w linku",
-      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
-    },
     {
       "lines": [
         "77"
