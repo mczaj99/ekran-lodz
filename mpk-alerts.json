@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-11-24T08:08:36+00:00",
+  "updatedAt": "2026-11-24T09:13:11+00:00",
   "status": "ok",
   "source": "MPK Łódź",
   "items": [
@@ -9,6 +9,17 @@
       ],
       "message": "Z powodu prac drogowych na skrzyżowaniu Sienkiewicza/Wigury i brakiem możliwości skrętu  w prawo w ulicę Wigury autobusy skierowano objazdem.",
       "update": "Linia 77 skierowana objazdem od skrzyżowania Sienkiewicza/Wigury przez Sienkiewicza, Piłsudskiego, Kilińskiego na swoja trasę. Przepraszamy za utrudnienia",
+      "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
+    },
+    {
+      "lines": [
+        "11",
+        "15",
+        "19",
+        "45"
+      ],
+      "message": "Zatrzymanie ruchu tramwajów na ul. Zgierska przy rondzie Biłyka w kierunku do pętli Helenówek z powodu awarii technicznej tramwaju.",
+      "update": "Przepraszamy za utrudnienia.",
       "url": "https://www.mpk.lodz.pl/rozklady/utrudnienia.jsp"
     }
   ]
